@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Spinner } from '../components/Spinner';
 import tmdbService from '../services/tmdbService';
 
-const Movies = () => {
+export const Movies = () => {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -102,5 +102,3 @@ const Movies = () => {
         </div>
     );
 };
-
-export default Movies;

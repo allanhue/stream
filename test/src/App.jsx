@@ -1,11 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
-import { Movies } from './pages/movies';
 import Series from './pages/Series';
 import Categories from './pages/categories';
 import Contact from './pages/Contact';
 import Payment from './pages/Payment';
 import Sidebar from './components/Sidebar';
+import { Movies } from './pages/Movies';
 
 function App() {
   return (
