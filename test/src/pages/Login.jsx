@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { Google } from 'lucide-react';
 
-const Login=()=>{ {
+const Login = () => {
+  const { signInWithGoogle } = useAuth();
   const [currentForm, setCurrentForm] = useState('login'); // 'login', 'signup', or 'confirmation'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -166,6 +169,15 @@ const Login=()=>{ {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing in:', error);
+    }
+  };
+
   const renderPasswordStrength = () => {
     if (password.length === 0) return null;
     
@@ -313,11 +325,10 @@ const Login=()=>{ {
         <div className="mt-6 grid grid-cols-2 gap-3">
           <button
             type="button"
+            onClick={handleGoogleSignIn}
             className="w-full inline-flex justify-center py-2 px-4 border border-gray-700 rounded-md shadow-sm bg-gray-900 text-sm font-medium text-gray-300 hover:bg-gray-800 transition-colors"
           >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-              <path fillRule="evenodd" d="M10 0C4.477 0 0 4.477 0 10c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0110 4.844c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.933.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C17.14 18.163 20 14.418 20 10c0-5.523-4.477-10-10-10z" clipRule="evenodd" />
-            </svg>
+            <Google size={20} />
           </button>
           <button
             type="button"
@@ -554,12 +565,11 @@ const Login=()=>{ {
   );
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 sm:p-8 flex flex-col items-center justify-center">
-      <div className="w-full max-w-md bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 sm:p-8 shadow-2xl shadow-black/50">
-        <div className="flex justify-center mb-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
-            Lan Prime
-          </h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
+      <div className="max-w-md w-full space-y-8 bg-gray-800 bg-opacity-50 backdrop-blur-sm p-8 rounded-lg shadow-lg">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-white mb-2">Welcome to StreamVibe</h2>
+          <p className="text-gray-300">Sign in to continue watching</p>
         </div>
         
         {currentForm === 'login' && renderLoginForm()}
@@ -568,6 +578,6 @@ const Login=()=>{ {
       </div>
     </div>
   );
-}
-}
+};
+
 export default Login;
