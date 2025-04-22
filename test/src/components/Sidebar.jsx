@@ -29,9 +29,9 @@ const Sidebar = () => {
       <div className="p-6">
         <div className="flex items-center space-x-3 mb-8">
           <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
-            <span className="text-xl font-bold">S</span>
+            <span className="text-xl font-bold">L</span>
           </div>
-          <h1 className="text-xl font-bold">StreamVibe</h1>
+          <h1 className="text-xl font-bold">LanPrimee</h1>
         </div>
 
         {user && (
