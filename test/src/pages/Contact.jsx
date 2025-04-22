@@ -2,16 +2,41 @@ import React, { useState } from 'react';
 import { Send, Mail, Phone, MapPin } from 'lucide-react';
 
 const Contact = () => {
-  const [formData, useState] = {
+  const [formData, setFormData] = useState({
     name: '',
     email: '',
+    subject: 'General Inquiry',
     message: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log('Form submitted:', formData);
+    try {
+      // Here you would typically send the form data to your backend
+      console.log('Form submitted:', formData);
+      
+      // Show success message
+      alert('Thank you for your message! We will get back to you soon.');
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        subject: 'General Inquiry',
+        message: ''
+      });
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('There was an error submitting your message. Please try again.');
+    }
   };
 
   return (
@@ -81,8 +106,12 @@ const Contact = () => {
                 <label className="block text-sm font-medium mb-2 text-gray-300">Name</label>
                 <input
                   type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   className="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                   placeholder="Your name"
+                  required
                 />
               </div>
               
@@ -90,26 +119,39 @@ const Contact = () => {
                 <label className="block text-sm font-medium mb-2 text-gray-300">Email</label>
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   className="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                   placeholder="Your email"
+                  required
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium mb-2 text-gray-300">Subject</label>
-                <select className="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                  <option>General Inquiry</option>
-                  <option>Technical Support</option>
-                  <option>Billing Question</option>
-                  <option>Feature Request</option>
+                <select 
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  className="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                >
+                  <option value="General Inquiry">General Inquiry</option>
+                  <option value="Technical Support">Technical Support</option>
+                  <option value="Billing Question">Billing Question</option>
+                  <option value="Feature Request">Feature Request</option>
                 </select>
               </div>
               
               <div>
                 <label className="block text-sm font-medium mb-2 text-gray-300">Message</label>
                 <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
                   className="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-lg px-4 py-3 text-white h-36 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition resize-none"
                   placeholder="Your message"
+                  required
                 ></textarea>
               </div>
               
