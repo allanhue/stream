@@ -1,70 +1,48 @@
 const axios = require('axios');
-require('dotenv').config();
 
-const tmdbApi = axios.create({
-    baseURL: 'https://api.themoviedb.org/3',
-    params: {
-        api_key: process.env.TMDB_API_KEY
-    }
-});
+const TMDB_API_KEY = process.env.TMDB_API_KEY;
+const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+const TMDB_AUTH_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkODgxY2RmMWY2YzExMjhiNWMyNWE4MjFiMTEwMjBmNyIsIm5iZiI6MTc0NDg5NTA3Mi44MzIsInN1YiI6IjY4MDBmYzYwNjFiMWM0YmIzMjk5ZjNlNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.eoWQ090wBdP37Eq7pwobfGHxWXfslhix2JtSLDHB8Bc';
 
 const tmdbService = {
-    // Get movie details
-    getMovie: async (movieId) => {
+    getDiscoverMovies: async () => {
         try {
-            const response = await tmdbApi.get(`/movie/${movieId}`);
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching movie:', error);
-            throw error;
-        }
-    },
-
-    // Get popular movies
-    getPopularMovies: async () => {
-        try {
-            const response = await tmdbApi.get('/movie/popular');
-            return response.data.results;
-        } catch (error) {
-            console.error('Error fetching popular movies:', error);
-            throw error;
-        }
-    },
-
-    // Get movie genres
-    getGenres: async () => {
-        try {
-            const response = await tmdbApi.get('/genre/movie/list');
-            return response.data.genres;
-        } catch (error) {
-            console.error('Error fetching genres:', error);
-            throw error;
-        }
-    },
-
-    // Search movies
-    searchMovies: async (query) => {
-        try {
-            const response = await tmdbApi.get('/search/movie', {
-                params: { query }
+            const response = await axios.get(`${TMDB_BASE_URL}/discover/movie`, {
+                params: {
+                    include_adult: false,
+                    include_video: false,
+                    language: 'en-US',
+                    page: 1,
+                    sort_by: 'popularity.desc'
+                },
+                headers: {
+                    'Authorization': `Bearer ${TMDB_AUTH_TOKEN}`,
+                    'accept': 'application/json'
+                }
             });
-            return response.data.results;
+            
+            return response.data;
         } catch (error) {
-            console.error('Error searching movies:', error);
+            console.error('Error fetching movies:', error);
             throw error;
         }
     },
 
-    // Get movie credits
-    getMovieCredits: async (movieId) => {
+    getMovieDetails: async (movieId) => {
         try {
-            const response = await tmdbApi.get(`/movie/${movieId}/credits`);
+            const response = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}`, {
+                headers: {
+                    'Authorization': `Bearer ${TMDB_AUTH_TOKEN}`,
+                    'accept': 'application/json'
+                }
+            });
+            
             return response.data;
         } catch (error) {
-            console.error('Error fetching movie credits:', error);
+            console.error('Error fetching movie details:', error);
             throw error;
         }
     }
 };
 
-module.exports = tmdbService; 
+module.exports = tmdbService;

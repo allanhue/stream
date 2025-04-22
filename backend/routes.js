@@ -24,15 +24,25 @@ router.get('/movies', async (req, res) => {
     }
 });
 
+router.get('/movies/discover', async (req, res) => {
+    try {
+        const movies = await tmdbService.getDiscoverMovies();
+        res.json(movies);
+    } catch (error) {
+        console.error('Error in discover movies route:', error);
+        res.status(500).json({ error: 'Failed to fetch movies' });
+    }
+});
+
 // Get movie details
 router.get('/movies/:id', async (req, res) => {
     try {
-        const movie = await tmdbService.getMovie(req.params.id);
-        const credits = await tmdbService.getMovieCredits(req.params.id);
-        res.json({ ...movie, credits });
+        const movieId = req.params.id;
+        const movie = await tmdbService.getMovieDetails(movieId);
+        res.json(movie);
     } catch (error) {
-        console.error('Error fetching movie:', error);
-        res.status(500).json({ error: 'Error fetching movie' });
+        console.error('Error fetching movie details:', error);
+        res.status(500).json({ error: 'Failed to fetch movie details' });
     }
 });
 
