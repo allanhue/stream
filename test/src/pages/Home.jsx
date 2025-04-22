@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Play, Star, Tv, Download, Clock } from 'lucide-react';
+import { TrialButton } from '../components/TrialButton';
 
 const Home = () => {
+  const [watchlist, setWatchlist] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const categories = [
     { title: "Action", image: "/api/placeholder/400/225" },
     { title: "Comedy", image: "/api/placeholder/400/225" },
@@ -15,6 +20,111 @@ const Home = () => {
     { title: "Urban Tales", description: "Stories from the heart of the city", image: "/api/placeholder/600/350" },
     { title: "Mystery Island", description: "Uncover the secrets of a forgotten place", image: "/api/placeholder/600/350" }
   ];
+
+  useEffect(() => {
+    const fetchWatchlist = async () => {
+      try {
+        const url = 'https://api.themoviedb.org/3/account/21954447/watchlist/movies?language=en-US&page=1&sort_by=created_at.asc';
+        const options = {
+          method: 'GET',
+          headers: {
+            accept: 'application/json',
+            Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkODgxY2RmMWY2YzExMjhiNWMyNWE4MjFiMTEwMjBmNyIsIm5iZiI6MTc0NDg5NTA3Mi44MzIsInN1YiI6IjY4MDBmYzYwNjFiMWM0YmIzMjk5ZjNlNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.eoWQ090wBdP37Eq7pwobfGHxWXfslhix2JtSLDHB8Bc'
+          }
+        };
+
+        const response = await fetch(url, options);
+        const data = await response.json();
+        
+        const transformedWatchlist = data.results.map(movie => ({
+          id: movie.id,
+          title: movie.title,
+          poster_path: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+          vote_average: movie.vote_average,
+          release_date: movie.release_date
+        }));
+
+        setWatchlist(transformedWatchlist);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching watchlist:', err);
+        setError('Failed to fetch watchlist');
+        setLoading(false);
+      }
+    };
+
+    fetchWatchlist();
+  }, []);
+
+  const renderWatchlist = () => (
+    <div className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-bold border-l-4 border-green-500 pl-4">My Watchlist</h2>
+        <Link 
+          to="/movies" 
+          className="text-green-500 hover:text-green-400 transition-colors flex items-center gap-2"
+        >
+          View All <Clock className="w-4 h-4" />
+        </Link>
+      </div>
+
+      {loading && (
+        <div className="flex justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+        </div>
+      )}
+
+      {error && (
+        <div className="text-red-500 text-center p-4">
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          {watchlist.map(movie => (
+            <div 
+              key={movie.id}
+              className="bg-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:shadow-green-900/20 transition-all duration-300"
+            >
+              <div className="relative aspect-[2/3]">
+                <img
+                  src={movie.poster_path}
+                  alt={movie.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = 'https://via.placeholder.com/300x450?text=No+Image';
+                  }}
+                />
+                <div className="absolute top-2 right-2 bg-black/60 px-2 py-1 rounded-md text-sm flex items-center gap-1">
+                  <Star className="w-4 h-4 text-yellow-500" />
+                  <span>{movie.vote_average.toFixed(1)}</span>
+                </div>
+              </div>
+              <div className="p-4">
+                <h3 className="font-bold text-white truncate">{movie.title}</h3>
+                <p className="text-sm text-gray-400">
+                  {new Date(movie.release_date).getFullYear()}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!loading && !error && watchlist.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-gray-400">Your watchlist is empty</p>
+          <Link 
+            to="/movies" 
+            className="inline-block mt-4 px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+          >
+            Browse Movies
+          </Link>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-950">
@@ -36,13 +146,7 @@ const Home = () => {
               Watch anywhere. Cancel anytime. Ready to watch? Start your free trial today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                to="/payment"
-                className="bg-gradient-to-r from-blue-400 to-green-400 text-white px-8 py-4 rounded-lg font-medium text-lg hover:opacity-90 transition-opacity flex items-center justify-center shadow-lg hover:shadow-blue-500/20"
-              >
-                <Play className="w-6 h-6 mr-2" />
-                Start Free Trial
-              </Link>
+              <TrialButton />
             </div>
           </div>
         </div>
@@ -66,6 +170,9 @@ const Home = () => {
           ))}
         </div>
       </div>
+
+      {/* Watchlist Section */}
+      {renderWatchlist()}
 
       {/* Categories */}
       <div className="py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">

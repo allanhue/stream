@@ -6,6 +6,8 @@ import Categories from './pages/categories';
 import Contact from './pages/Contact';
 import Payment from './pages/Payment';
 import Sidebar from './components/Sidebar';
+import { SubscriptionGuard } from './components/SubscriptionGuard';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -16,11 +18,33 @@ function App() {
           <main className="flex-1 ml-64 p-8">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/movies" element={<Movies />} />
-              <Route path="/series" element={<Series />} />
+              <Route path="/login" element={<Login />} />
+              <Route 
+                path="/movies" 
+                element={
+                  <ProtectedRoute>
+                    <Movies />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/series" 
+                element={
+                  <ProtectedRoute>
+                    <Series />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/payment" 
+                element={
+                  <ProtectedRoute>
+                    <Payment />
+                  </ProtectedRoute>
+                } 
+              />
               <Route path="/categories" element={<Categories />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="/payment" element={<Payment />} />
             </Routes>
           </main>
         </div>
