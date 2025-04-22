@@ -2,6 +2,7 @@
 const express = require("express");
 const cors = require("cors");
 const routes = require('./routes');
+const paymentRoutes = require('./routes/payment');
 const { initDatabase } = require('./db');
 const axios = require('axios');
 const path = require('path');
@@ -107,6 +108,9 @@ app.get("/streamapp/test", async (req, res) => {
 
 // Protected routes
 app.use('/api/protected', authenticateToken);
+
+// Payment routes
+app.use('/api/payment', paymentRoutes);
 
 //define the routes
 app.get("/streamapp/",(req,res)=>{
