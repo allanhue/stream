@@ -3,7 +3,7 @@ import { api } from '../services/api';
 import { Spinner } from '../components/Spinner';
 import { MovieCard } from '../components/MovieCard';
 
-export const Movies = () => {
+const Movies = () => {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -79,3 +79,5 @@ export const Movies = () => {
         </div>
     );
 };
+
+export default Movies;

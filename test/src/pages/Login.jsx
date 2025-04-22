@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Google } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 
 const Login = () => {
   const { signInWithGoogle } = useAuth();
@@ -328,7 +328,7 @@ const Login = () => {
             onClick={handleGoogleSignIn}
             className="w-full inline-flex justify-center py-2 px-4 border border-gray-700 rounded-md shadow-sm bg-gray-900 text-sm font-medium text-gray-300 hover:bg-gray-800 transition-colors"
           >
-            <Google size={20} />
+            <LogIn size={20} />
           </button>
           <button
             type="button"
