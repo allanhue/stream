@@ -19,7 +19,10 @@ const {
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173', // Vite's default port
+    credentials: true
+}));
 app.use(customCors);
 app.use(limiter);
 app.use(requestLogger);
@@ -112,7 +115,7 @@ app.get("/streamapp/",(req,res)=>{
 app.use(errorHandler);
 
 //set up express server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // Initialize database before starting server
 const startServer = async () => {
