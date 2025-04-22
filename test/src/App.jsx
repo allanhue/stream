@@ -1,8 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import { Movies } from './pages/movies';
+import Series from './pages/Series';
 import Categories from './pages/categories';
 import Contact from './pages/Contact';
+import Payment from './pages/Payment';
 import Sidebar from './components/Sidebar';
 
 function App() {
@@ -15,8 +17,10 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/movies" element={<Movies />} />
+              <Route path="/series" element={<Series />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/payment" element={<Payment />} />
             </Routes>
           </main>
         </div>
