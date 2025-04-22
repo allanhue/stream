@@ -11,15 +11,33 @@ export const Movies = () => {
     const [genres, setGenres] = useState([]);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchMovies = async () => {
             try {
                 setLoading(true);
-                const [moviesData, genresData] = await Promise.all([
-                    tmdbService.getPopularMovies(),
-                    tmdbService.getMovieGenres()
-                ]);
-                setMovies(moviesData);
-                setGenres(genresData);
+                const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
+                const options = {
+                    method: 'GET',
+                    headers: {
+                        accept: 'application/json',
+                        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkODgxY2RmMWY2YzExMjhiNWMyNWE4MjFiMTEwMjBmNyIsIm5iZiI6MTc0NDg5NTA3Mi44MzIsInN1YiI6IjY4MDBmYzYwNjFiMWM0YmIzMjk5ZjNlNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.eoWQ090wBdP37Eq7pwobfGHxWXfslhix2JtSLDHB8Bc'
+                    }
+                };
+
+                const response = await fetch(url, options);
+                const data = await response.json();
+                
+                // Transform the movie data to match your component's needs
+                const transformedMovies = data.results.map(movie => ({
+                    id: movie.id,
+                    title: movie.title,
+                    overview: movie.overview,
+                    poster_path: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+                    release_date: movie.release_date,
+                    vote_average: movie.vote_average,
+                    genres: movie.genre_ids
+                }));
+
+                setMovies(transformedMovies);
                 setError(null);
             } catch (err) {
                 setError('Failed to fetch movies. Please try again later.');
@@ -29,7 +47,7 @@ export const Movies = () => {
             }
         };
 
-        fetchData();
+        fetchMovies();
     }, []);
 
     const filteredMovies = movies.filter(movie => {
@@ -82,6 +100,9 @@ export const Movies = () => {
                                 src={movie.poster_path}
                                 alt={movie.title}
                                 className="w-full h-64 object-cover"
+                                onError={(e) => {
+                                    e.target.src = 'https://via.placeholder.com/500x750?text=No+Image';
+                                }}
                             />
                             <div className="p-4">
                                 <h3 className="text-xl font-bold text-white mb-2">{movie.title}</h3>
@@ -102,3 +123,5 @@ export const Movies = () => {
         </div>
     );
 };
+
+export default Movies;
