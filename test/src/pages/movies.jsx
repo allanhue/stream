@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { api } from '../services/api';
 
 const Movies = () => {
   const [movies, setMovies] = useState([]);
@@ -7,49 +8,30 @@ const Movies = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('All');
-
-  // Sample genres - you would get these from your API
-  const genres = ['All', 'Action', 'Comedy', 'Drama', 'Sci-Fi', 'Horror', 'Documentary'];
+  const [genres, setGenres] = useState(['All']);
 
   useEffect(() => {
-    // In a real app, you would fetch from your backend/API
-    const fetchMovies = async () => {
+    const fetchData = async () => {
       try {
-        // Simulating API call
-        setTimeout(() => {
-          const mockMovies = [
-            {
-              id: 1,
-              title: "The Last Adventure",
-              year: 2023,
-              rating: 4.5,
-              duration: "2h 15m",
-              genre: ["Action", "Adventure"],
-              thumbnail: "https://via.placeholder.com/300x450?text=The+Last+Adventure",
-              description: "A thrilling journey through uncharted territories."
-            },
-            {
-              id: 2,
-              title: "Midnight in Paris",
-              year: 2022,
-              rating: 4.2,
-              duration: "1h 48m",
-              genre: ["Comedy", "Drama"],
-              thumbnail: "https://via.placeholder.com/300x450?text=Midnight+in+Paris",
-              description: "A romantic comedy about time travel and love."
-            },
-            // Add more mock movies...
-          ];
-          setMovies(mockMovies);
-          setLoading(false);
-        }, 1000);
+        // Get the token from localStorage or your auth context
+        const token = localStorage.getItem('token');
+        
+        // Fetch movies and categories in parallel
+        const [moviesData, categoriesData] = await Promise.all([
+          api.getMovies(token),
+          api.getCategories(token)
+        ]);
+
+        setMovies(moviesData);
+        setGenres(['All', ...categoriesData.map(cat => cat.name)]);
+        setLoading(false);
       } catch (err) {
         setError(err.message);
         setLoading(false);
       }
     };
 
-    fetchMovies();
+    fetchData();
   }, []);
 
   const filteredMovies = movies.filter(movie => {

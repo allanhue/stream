@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('./middlewares');
 const axios = require('axios');
+const authController = require('./controllers/authController');
+const videoController = require('./controllers/videoController');
+const categoryController = require('./controllers/categoryController');
 
 // Auth routes
 router.post('/auth/login', authController.login);
