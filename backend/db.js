@@ -9,6 +9,23 @@ const pool = new Pool({
 // Initialize database tables
 const initDatabase = async () => {
     try {
+        // Create users table
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Create admin user if not exists
+        await pool.query(`
+            INSERT INTO users (email, password)
+            VALUES ('allanmwangi329@gmail.com', 'admin')
+            ON CONFLICT (email) DO NOTHING
+        `);
+
         // Create movies table
         await pool.query(`
             CREATE TABLE IF NOT EXISTS movies (
@@ -45,9 +62,10 @@ const initDatabase = async () => {
             )
         `);
 
-        console.log('Database tables initialized successfully');
+        console.log('✅ Database initialized successfully');
     } catch (error) {
-        console.error('Error initializing database:', error);
+        console.error('❌ Error initializing database:', error);
+        throw error;
     }
 };
 
@@ -121,11 +139,11 @@ const getGenreName = (genreId) => {
     return genres[genreId] || 'Unknown';
 };
 
-// Initialize database on module load
-initDatabase();
+const query = (text, params) => pool.query(text, params);
 
 module.exports = {
-    query: (text, params) => pool.query(text, params),
+    query,
     pool,
-    storeMovie
+    storeMovie,
+    initDatabase
 }; 
