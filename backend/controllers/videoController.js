@@ -77,8 +77,6 @@ const streamVideo = async (req, res) => {
         if (video.rows.length === 0) {
             return res.status(404).json({ error: 'Video not found' });
         }
-        // For now, just return the URL. In a production environment,
-        // you would want to implement proper video streaming
         res.json({ streamUrl: video.rows[0].url });
     } catch (error) {
         console.error('Error streaming video:', error);

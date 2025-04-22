@@ -37,10 +37,10 @@ const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 
 // Test database connection immediately
 initDatabase().then(() => {
-    console.log('✅ Database connected successfully');
+    console.log(' Database connected successfully');
     app.use('/api', routes);
 }).catch((error) => {
-    console.error('❌ Database connection failed');
+    console.error(' Database connection failed');
     console.error(error.message);
     process.exit(1);
 });

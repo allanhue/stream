@@ -5,7 +5,7 @@ import { LogIn } from 'lucide-react';
 
 const Login = () => {
   const { signInWithGoogle } = useAuth();
-  const [currentForm, setCurrentForm] = useState('login'); // 'login', 'signup', or 'confirmation'
+  const [currentForm, setCurrentForm] = useState('login'); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -162,6 +162,7 @@ const Login = () => {
       console.log('Resending code to:', email);
       setCountdown(30);
       alert('Verification code resent!');
+
     } catch (err) {
       setError('Failed to resend code. Please try again.');
     } finally {

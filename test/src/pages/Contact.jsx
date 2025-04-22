@@ -1,168 +1,68 @@
-import React, { useState } from 'react';
-import { Send, Mail, Phone, MapPin } from 'lucide-react';
+import React from 'react';
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: 'General Inquiry',
-    message: ''
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // Here you would typically send the form data to your backend
-      console.log('Form submitted:', formData);
-      
-      // Show success message
-      alert('Thank you for your message! We will get back to you soon.');
-      
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        subject: 'General Inquiry',
-        message: ''
-      });
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      alert('There was an error submitting your message. Please try again.');
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-6 md:p-12">
-      <div className="max-w-6xl mx-auto">
-        {/* Header Section */}
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-500">Contact Us</h1>
-          <p className="text-gray-300 max-w-2xl mx-auto">We'd love to hear from you. Reach out to our team with any questions or feedback.</p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          {/* Contact Info Section */}
-          <div className="space-y-8">
-            <div className="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-lg p-6 shadow-lg transform transition hover:scale-105">
-              <h2 className="text-2xl font-semibold mb-6 text-indigo-300">Get in Touch</h2>
-              
-              <div className="space-y-6">
-                <div className="flex items-center space-x-4">
-                  <div className="bg-indigo-600 p-3 rounded-full">
-                    <Mail size={20} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Email</p>
-                    <a href="mailto:support@streamvibe.com" className="text-indigo-300 hover:text-indigo-200">support@streamvibe.com</a>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-4">
-                  <div className="bg-indigo-600 p-3 rounded-full">
-                    <Phone size={20} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Phone</p>
-                    <p className="text-indigo-300">(123) 456-7890</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-4">
-                  <div className="bg-indigo-600 p-3 rounded-full">
-                    <MapPin size={20} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Address</p>
-                    <p className="text-indigo-300">123 Streaming Street, Digital City</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-lg p-6 shadow-lg">
-              <h2 className="text-2xl font-semibold mb-4 text-indigo-300">Office Hours</h2>
-              <div className="space-y-2">
-                <p className="flex justify-between"><span>Monday - Friday:</span> <span>9:00 AM - 6:00 PM</span></p>
-                <p className="flex justify-between"><span>Saturday:</span> <span>10:00 AM - 4:00 PM</span></p>
-                <p className="flex justify-between"><span>Sunday:</span> <span>Closed</span></p>
-              </div>
-            </div>
+    <div className="max-w-4xl mx-auto">
+      <div className="bg-gray-800 rounded-lg p-8">
+        <h1 className="text-3xl font-bold text-white mb-6">Contact Us</h1>
+        <p className="text-gray-300 mb-8">
+          Have questions or feedback? We'd love to hear from you. Fill out the form below and we'll get back to you as soon as possible.
+        </p>
+
+        <form className="space-y-6">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
+              Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="Your name"
+            />
           </div>
-          
-          {/* Form Section */}
-          <div className="bg-gray-800 bg-opacity-40 backdrop-blur-sm rounded-lg p-6 md:p-8 shadow-lg">
-            <h2 className="text-2xl font-semibold mb-6 text-indigo-300">Send a Message</h2>
-            
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium mb-2 text-gray-300">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-                  placeholder="Your name"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-2 text-gray-300">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-                  placeholder="Your email"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-2 text-gray-300">Subject</label>
-                <select 
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  className="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-                >
-                  <option value="General Inquiry">General Inquiry</option>
-                  <option value="Technical Support">Technical Support</option>
-                  <option value="Billing Question">Billing Question</option>
-                  <option value="Feature Request">Feature Request</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-2 text-gray-300">Message</label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  className="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-lg px-4 py-3 text-white h-36 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition resize-none"
-                  placeholder="Your message"
-                  required
-                ></textarea>
-              </div>
-              
-              <button
-                type="submit"
-                className="w-full bg-gradient-to-r from-indigo-600 to-indigo-800 text-white px-6 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 hover:from-indigo-700 hover:to-indigo-900 transition transform hover:-translate-y-1"
-              >
-                <span>Send Message</span>
-                <Send size={18} />
-              </button>
-            </form>
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="your@email.com"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
+              Message
+            </label>
+            <textarea
+              id="message"
+              rows="4"
+              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="Your message"
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-green-500 text-white py-3 px-6 rounded-lg font-medium hover:bg-green-600 transition-colors"
+          >
+            Send Message
+          </button>
+        </form>
+
+        <div className="mt-8 pt-8 border-t border-gray-700">
+          <h2 className="text-xl font-semibold text-white mb-4">Other Ways to Reach Us</h2>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <span className="text-gray-400">Email:</span>
+              <a href="mailto:allanmwangi329@gmail.com" className="text-green-500 hover:text-green-400">
+                allanmwangi329@gmail.com
+              </a>
+            </div>
           </div>
         </div>
       </div>

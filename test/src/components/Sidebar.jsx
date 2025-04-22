@@ -1,76 +1,43 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  Home, 
-  Film, 
-  List, 
-  Info, 
-  Mail
-} from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Home, Film, List, Mail } from 'lucide-react';
 
 const Sidebar = () => {
+  const location = useLocation();
+
+  const navItems = [
+    { path: '/', icon: Home, label: 'Home' },
+    { path: '/movies', icon: Film, label: 'Movies' },
+    { path: '/categories', icon: List, label: 'Categories' },
+    { path: '/contact', icon: Mail, label: 'Contact' }
+  ];
+
   return (
-    <div className="w-64 bg-gray-900 text-white h-screen fixed left-0 top-0 overflow-y-auto">
+    <div className="fixed top-0 left-0 h-screen w-64 bg-gray-900 text-white">
       <div className="p-6">
-        <div className="flex items-center space-x-3 mb-8">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
-            <span className="text-xl font-bold">L</span>
-          </div>
-          <h1 className="text-xl font-bold">LanPrimee</h1>
-        </div>
-
-        <div className="mb-8 p-4 bg-gray-800 rounded-lg">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-              <span className="text-gray-300">A</span>
-            </div>
-            <div>
-              <p className="font-medium">Admin</p>
-              <p className="text-sm text-gray-400">allanmwangi329@gmail.com</p>
-            </div>
-          </div>
-        </div>
-
-        <nav className="space-y-2">
-          <Link
-            to="/"
-            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-          >
-            <Home size={20} />
-            <span>Home</span>
-          </Link>
-
-          <Link
-            to="/movies"
-            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-          >
-            <Film size={20} />
-            <span>Movies</span>
-          </Link>
-
-          <Link
-            to="/categories"
-            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-          >
-            <List size={20} />
-            <span>Categories</span>
-          </Link>
-
-          <Link
-            to="/about"
-            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-          >
-            <Info size={20} />
-            <span>About</span>
-          </Link>
-
-          <Link
-            to="/contact"
-            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-          >
-            <Mail size={20} />
-            <span>Contact</span>
-          </Link>
+        <h1 className="text-2xl font-bold text-green-500 mb-8">LanPrime</h1>
+        <nav>
+          <ul className="space-y-4">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+              return (
+                <li key={item.path}>
+                  <Link
+                    to={item.path}
+                    className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+                      isActive
+                        ? 'bg-green-500 text-white'
+                        : 'text-gray-300 hover:bg-gray-800'
+                    }`}
+                  >
+                    <Icon size={20} />
+                    <span>{item.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </nav>
       </div>
     </div>
