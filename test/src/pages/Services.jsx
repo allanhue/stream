@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import {  } from 'framer-motion';
 
 const ServiceCard = ({ title, description, icon, index }) => {
   return (
