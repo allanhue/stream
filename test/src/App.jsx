@@ -5,7 +5,7 @@ import Categories from './pages/categories';
 import Contact from './pages/Contact';
 import Payment from './pages/Payment';
 import Sidebar from './components/Sidebar';
-import { Movies } from './pages/Movies';
+import  Movies from './pages/Movies'; 
 
 function App() {
   return (
