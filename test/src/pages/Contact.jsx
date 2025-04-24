@@ -60,7 +60,7 @@ const Contact = () => {
             <div className="flex items-center space-x-3">
               <span className="text-gray-400">Email:</span>
               <a href="mailto:allanmwangi329@gmail.com" className="text-green-500 hover:text-green-400">
-                allanmwangi329@gmail.com
+                streamprimee
               </a>
             </div>
           </div>

@@ -21,7 +21,6 @@ const Profile = () => {
     setIsLoading(true);
     // Simulate logout process
     setTimeout(() => {
-      console.log('User logged out');
       setIsLoading(false);
       // Here you would typically handle the navigation after logout
     }, 1000);
