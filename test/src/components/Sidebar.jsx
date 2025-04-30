@@ -17,7 +17,7 @@ const Sidebar = () => {
     <div className="fixed top-0 left-0 h-screen w-64 bg-gray-900 text-white">
       <div className="p-6">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent mb-8">
-          LanPrime
+          LanPrimee
         </h1>
         <nav>
           <ul className="space-y-4">

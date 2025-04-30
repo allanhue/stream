@@ -7,7 +7,7 @@ const Movies = () => {
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedGenre, setSelectedGenre] = useState('');
-    const [genres, setGenres] = useState([]);
+    const [genres] = useState([]);
 
     useEffect(() => {
         const fetchMovies = async () => {
