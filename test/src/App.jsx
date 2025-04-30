@@ -1,17 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import Sidebar from './components/Sidebar';
-import { SubscriptionGuard } from './components/SubscriptionGuard';
+// import { SubscriptionGuard } from './components/SubscriptionGuard';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import ErrorBoundary from './components/ErrorBoundary'; 
-import Spinner from './components/Spinner';
-
+// import ErrorBoundary from './components/ErrorBoundary'; 
+import {Spinner} from './components/Spinner';
 // Lazy-loaded components
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Movies = lazy(() => import('./pages/Movies'));
 const Series = lazy(() => import('./pages/Series'));
-const Categories = lazy(() => import('./pages/categories'));
+const Categories = lazy(() => import('./pages/Categories'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Payment = lazy(() => import('./pages/Payment'));
 
@@ -23,7 +22,7 @@ function App() {
           <div className="flex">
             <Sidebar />
             <main className="flex-1 ml-64 p-8">
-              <Suspense fallback={<LoadingSpinner />}>
+              <Suspense fallback={<Spinner />}>
                 <Routes>
                   <Route 
                     path="/" 
