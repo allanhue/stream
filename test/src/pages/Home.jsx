@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Star, Tv, Download, Clock } from 'lucide-react';
-import { TrialButton } from '../components/TrialButton';
+import {  Star, Tv, Download, Clock } from 'lucide-react';
 
 const Home = () => {
   const [watchlist, setWatchlist] = useState([]);
@@ -125,6 +124,12 @@ const Home = () => {
       )}
     </div>
   );
+// Trial Button Component
+const TrialButton = () => (
+    <Link to="/trial" className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors">
+      Start Free Trial
+    </Link>
+  );
 
   return (
     <div className="min-h-screen bg-gray-950">
@@ -147,6 +152,7 @@ const Home = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <TrialButton />
+ 
             </div>
           </div>
         </div>
@@ -212,14 +218,14 @@ const Home = () => {
                 <Download className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Download & Go</h3>
-              <p className="text-gray-400">Download your shows to watch offline. Save your favorites easily.</p>
+              <p className="text-gray-400">Download your shows  watch offline</p>
             </div>
             <div className="bg-gray-800 p-8 rounded-xl hover:shadow-lg hover:shadow-blue-500/10 transition-all">
               <div className="w-12 h-12 bg-gradient-to-r from-blue-400 to-green-400 rounded-lg flex items-center justify-center mb-4">
                 <Clock className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">No Commitments</h3>
-              <p className="text-gray-400">Cancel anytime. No hidden fees. No contracts.</p>
+              <p className="text-gray-400">Cancel anytime</p>
             </div>
           </div>
         </div>

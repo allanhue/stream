@@ -5,6 +5,8 @@ import Sidebar from './components/Sidebar';
 import { ProtectedRoute } from './components/ProtectedRoute';
 // import ErrorBoundary from './components/ErrorBoundary'; 
 import {Spinner} from './components/Spinner';
+
+
 // Lazy-loaded components
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
@@ -17,7 +19,6 @@ const Payment = lazy(() => import('./pages/Payment'));
 function App() {
   return (
     <Router>
-      <ErrorBoundary>
         <div className="min-h-screen bg-gray-950">
           <div className="flex">
             <Sidebar />
@@ -77,7 +78,6 @@ function App() {
             </main>
           </div>
         </div>
-      </ErrorBoundary>
     </Router>
   );
 }
