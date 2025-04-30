@@ -3,7 +3,7 @@ import { lazy, Suspense } from 'react';
 import Sidebar from './components/Sidebar';
 // import { SubscriptionGuard } from './components/SubscriptionGuard';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import ErrorBoundary from './components/ErrorBoundary'; 
+// import ErrorBoundary from './components/ErrorBoundary'; 
 import {Spinner} from './components/Spinner';
 // Lazy-loaded components
 const Home = lazy(() => import('./pages/Home'));
