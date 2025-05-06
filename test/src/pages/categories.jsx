@@ -43,10 +43,10 @@ const Categories = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {categories.map(category => (
             <Link 
-              key={category.id} 
-              to={`/category/${category.id}`}
-              className="group"
-            >
+            key={category.id} 
+            to={`/categories/${category.id}`}
+            className="group"
+                 >
               <div className="bg-gray-900 rounded-lg overflow-hidden transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-green-900/20">
                 <div className="relative h-48">
                   <img 
