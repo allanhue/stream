@@ -10,8 +10,8 @@ import {Spinner} from './components/Spinner';
 // Lazy-loaded components
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
-const Movies = lazy(() => import('./pages/Movies.jsx'));
-const Series = lazy(() => import('./pages/Series'));
+const Movies = lazy(() => import('./pages/Movies.jsx'))
+;const Series = lazy(() => import('./pages/Series'));
 const Categories = lazy(() => import('./pages/Categories'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Payment = lazy(() => import('./pages/Payment'));
