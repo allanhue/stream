@@ -1,15 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { 
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    sendEmailVerification,
-    onAuthStateChanged,
-    signOut,
-    GoogleAuthProvider,
-    signInWithPopup
-} from 'firebase/auth';
-import { auth } from '../firebase';
 import { authService } from '../services/authService';
+import axios from 'axios';
 
 const AuthContext = createContext();
 
@@ -31,28 +22,26 @@ export const AuthProvider = ({ children }) => {
                 // Get auth token
                 const token = await authService.createAuthToken();
                 localStorage.setItem('tmdb_token', token.request_token);
-
             } catch (error) {
                 console.error('Error initializing auth:', error);
             }
         };
-
         initializeAuth();
     }, []);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUser(user);
-            setLoading(false);
-        });
-
-        return unsubscribe;
+        // Check for token in localStorage and set user
+        const token = localStorage.getItem('token');
+        if (token) {
+            // Optionally decode token for user info, or fetch user profile from backend
+            setUser({ token });
+        }
+        setLoading(false);
     }, []);
 
     // Handle subscription changes
     const updateSubscription = async (plan) => {
         try {
-            // In a real app, you'd verify the purchase with your backend
             localStorage.setItem('subscription_status', plan);
             setSubscriptionStatus(plan);
         } catch (error) {
@@ -72,37 +61,39 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // Signup using backend
     const signup = async (email, password) => {
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            await sendEmailVerification(userCredential.user);
-            return userCredential.user;
+            const res = await axios.post('/api/auth/register', { email, password });
+            localStorage.setItem('token', res.data.token);
+            setUser({ email });
+            return res.data;
         } catch (error) {
-            throw new Error(error.message);
+            throw new Error(error.response?.data?.error || error.message);
         }
     };
 
+    // Login using backend
     const login = async (email, password) => {
         try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            return userCredential.user;
+            const res = await axios.post('/api/auth/login', { email, password });
+            localStorage.setItem('token', res.data.token);
+            setUser({ email });
+            return res.data;
         } catch (error) {
-            throw new Error(error.message);
+            throw new Error(error.response?.data?.error || error.message);
         }
     };
 
+    // Logout
     const logout = () => {
-        return signOut(auth);
+        localStorage.removeItem('token');
+        setUser(null);
     };
 
+    // Placeholder for Google sign-in (not implemented)
     const signInWithGoogle = async () => {
-        const provider = new GoogleAuthProvider();
-        try {
-            const result = await signInWithPopup(auth, provider);
-            return result.user;
-        } catch (error) {
-            throw new Error(error.message);
-        }
+        throw new Error('Google sign-in not implemented');
     };
 
     const value = {
