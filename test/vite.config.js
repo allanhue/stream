@@ -25,12 +25,12 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['@heroicons/react', 'lucide-react']
+          ui: ['@heroicons/react', 'lucide-react', 'framer-motion']
         }
       }
     }
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom']
+    include: ['react', 'react-dom', 'react-router-dom', 'framer-motion']
   }
 })
