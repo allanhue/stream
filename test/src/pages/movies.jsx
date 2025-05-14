@@ -7,22 +7,24 @@ const Movies = () => {
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedGenre, setSelectedGenre] = useState('');
-    const [genres] = useState([]);
+    const [genres, setGenres] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
 
     useEffect(() => {
         const fetchMovies = async () => {
             try {
                 setLoading(true);
-                const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
-                const options = {
-                    method: 'GET',
+                const url = `${import.meta.env.VITE_API_URL}/api/movies`;
+                const response = await fetch(url, {
                     headers: {
-                        accept: 'application/json',
-                        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkODgxY2RmMWY2YzExMjhiNWMyNWE4MjFiMTEwMjBmNyIsIm5iZiI6MTc0NDg5NTA3Mi44MzIsInN1YiI6IjY4MDBmYzYwNjFiMWM0YmIzMjk5ZjNlNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.eoWQ090wBdP37Eq7pwobfGHxWXfslhix2JtSLDHB8Bc'
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
-                };
+                });
 
-                const response = await fetch(url, options);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch movies');
+                }
+
                 const data = await response.json();
                 
                 // Transform the movie data to match your component's needs
@@ -46,8 +48,36 @@ const Movies = () => {
             }
         };
 
+        const fetchGenres = async () => {
+            try {
+                const url = `${import.meta.env.VITE_API_URL}/api/genres`;
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch genres');
+                }
+
+                const data = await response.json();
+                setGenres(data);
+            } catch (err) {
+                console.error('Failed to fetch genres:', err);
+            }
+        };
+
         fetchMovies();
+        fetchGenres();
     }, []);
+
+    const handleSearch = (e) => {
+        setIsSearching(true);
+        setSearchTerm(e.target.value);
+        // Add a small delay to prevent too many re-renders
+        setTimeout(() => setIsSearching(false), 300);
+    };
 
     const filteredMovies = movies.filter(movie => {
         const matchesSearch = movie.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -67,13 +97,20 @@ const Movies = () => {
 
                 {/* Search and Filter */}
                 <div className="flex flex-col md:flex-row gap-4 mb-8">
-                    <input
-                        type="text"
-                        placeholder="Search movies..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="flex-1 px-4 py-2 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
+                    <div className="flex-1 relative">
+                        <input
+                            type="text"
+                            placeholder="Search movies..."
+                            value={searchTerm}
+                            onChange={handleSearch}
+                            className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                        {isSearching && (
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                <Spinner size="sm" />
+                            </div>
+                        )}
+                    </div>
                     <select
                         value={selectedGenre}
                         onChange={(e) => setSelectedGenre(e.target.value)}
@@ -95,29 +132,46 @@ const Movies = () => {
                             key={movie.id}
                             className="bg-gray-800 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-blue-500/10 transition-all"
                         >
-                            <img
-                                src={movie.poster_path}
-                                alt={movie.title}
-                                className="w-full h-64 object-cover"
-                                onError={(e) => {
-                                    e.target.src = 'https://via.placeholder.com/500x750?text=No+Image';
-                                }}
-                            />
+                            <div className="relative h-64">
+                                <img
+                                    src={movie.poster_path}
+                                    alt={movie.title}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                        e.target.src = 'https://via.placeholder.com/500x750?text=No+Image';
+                                        e.target.onerror = null; // Prevent infinite loop
+                                    }}
+                                />
+                                <div className="absolute top-2 right-2 bg-yellow-400 text-gray-900 px-2 py-1 rounded-full text-sm font-bold">
+                                    {movie.vote_average.toFixed(1)} ★
+                                </div>
+                            </div>
                             <div className="p-4">
                                 <h3 className="text-xl font-bold text-white mb-2">{movie.title}</h3>
-                                <p className="text-gray-400 text-sm mb-4">{movie.overview.substring(0, 100)}...</p>
+                                <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+                                    {movie.overview}
+                                </p>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-yellow-400">
-                                        {movie.vote_average.toFixed(1)} ★
-                                    </span>
                                     <span className="text-gray-400 text-sm">
                                         {new Date(movie.release_date).getFullYear()}
                                     </span>
+                                    <button
+                                        className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                                        onClick={() => {/* Add to watchlist or play movie */}}
+                                    >
+                                        Watch Now
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
+
+                {filteredMovies.length === 0 && (
+                    <div className="text-center text-gray-400 py-8">
+                        No movies found matching your criteria.
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -2,7 +2,7 @@
 const express = require("express");
 const cors = require("cors");
 const routes = require('./routes');
-const paymentRoutes = require('./routes/payment');
+const paymentRoutes = require('./routes/paymentRoutes');
 const { initDatabase } = require('./db');
 const axios = require('axios');
 const path = require('path');
@@ -21,7 +21,9 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://lanprimee.netlify.app'],
+    origin: process.env.NODE_ENV === 'production' 
+        ? ['https://lanprimee.netlify.app'] 
+        : ['http://localhost:5173'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -38,11 +40,10 @@ const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 
 // Test database connection immediately
 initDatabase().then(() => {
-    console.log(' Database connected successfully');
+    console.log('✅ Database connected successfully');
     app.use('/api', routes);
 }).catch((error) => {
-    console.error(' Database connection failed');
-    console.error(error.message);
+    console.error('❌ Database connection failed:', error.message);
     process.exit(1);
 });
 
@@ -110,12 +111,17 @@ app.get("/streamapp/test", async (req, res) => {
 app.use('/api/protected', authenticateToken);
 
 // Payment routes
-app.use('/api/payment', paymentRoutes);
+app.use('/api/payments', paymentRoutes);
 
 //define the routes
 app.get("/streamapp/",(req,res)=>{
     res.send("Hello World");
 })
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
 
 // Error handler should be last
 app.use(errorHandler);
@@ -130,7 +136,7 @@ const startServer = async () => {
         app.use('/api', routes);
         
         app.listen(PORT, () => {
-            console.log(`Server running on http://localhost:${PORT}`);
+            console.log(`🚀 Server running on port ${PORT}`);
         });
     } catch (error) {
         console.error('Failed to start server:', error);
