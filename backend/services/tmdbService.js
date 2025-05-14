@@ -1,48 +1,81 @@
 const axios = require('axios');
+require('dotenv').config();
 
-const TMDB_API_KEY = process.env.TMDB_API_KEY;
-const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
-const TMDB_AUTH_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkODgxY2RmMWY2YzExMjhiNWMyNWE4MjFiMTEwMjBmNyIsIm5iZiI6MTc0NDg5NTA3Mi44MzIsInN1YiI6IjY4MDBmYzYwNjFiMWM0YmIzMjk5ZjNlNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.eoWQ090wBdP37Eq7pwobfGHxWXfslhix2JtSLDHB8Bc';
+class TMDBService {
+    constructor() {
+        this.apiKey = process.env.TMDB_API_KEY;
+        this.baseUrl = 'https://api.themoviedb.org/3';
+    }
 
-const tmdbService = {
-    getDiscoverMovies: async () => {
+    async validateWithLogin(username, password) {
         try {
-            const response = await axios.get(`${TMDB_BASE_URL}/discover/movie`, {
-                params: {
-                    include_adult: false,
-                    include_video: false,
-                    language: 'en-US',
-                    page: 1,
-                    sort_by: 'popularity.desc'
-                },
-                headers: {
-                    'Authorization': `Bearer ${TMDB_AUTH_TOKEN}`,
-                    'accept': 'application/json'
-                }
-            });
+            // First, get the request token
+            const tokenResponse = await axios.get(
+                `${this.baseUrl}/authentication/token/new?api_key=${this.apiKey}`
+            );
             
-            return response.data;
+            const requestToken = tokenResponse.data.request_token;
+
+            // Validate the token with login
+            const validateResponse = await axios.post(
+                `${this.baseUrl}/authentication/token/validate_with_login`,
+                {
+                    username,
+                    password,
+                    request_token: requestToken
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.apiKey}`
+                    }
+                }
+            );
+
+            // Create a session
+            const sessionResponse = await axios.post(
+                `${this.baseUrl}/authentication/session/new?api_key=${this.apiKey}`,
+                {
+                    request_token: requestToken
+                }
+            );
+
+            return {
+                success: true,
+                sessionId: sessionResponse.data.session_id
+            };
         } catch (error) {
-            console.error('Error fetching movies:', error);
+            console.error('TMDB Authentication error:', error.response?.data || error.message);
+            return {
+                success: false,
+                error: error.response?.data?.status_message || 'Authentication failed'
+            };
+        }
+    }
+
+    async getPopularMovies() {
+        try {
+            const response = await axios.get(
+                `${this.baseUrl}/movie/popular?api_key=${this.apiKey}`
+            );
+            return response.data.results;
+        } catch (error) {
+            console.error('Error fetching popular movies:', error);
             throw error;
         }
-    },
+    }
 
-    getMovieDetails: async (movieId) => {
+    async getMovieDetails(movieId) {
         try {
-            const response = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}`, {
-                headers: {
-                    'Authorization': `Bearer ${TMDB_AUTH_TOKEN}`,
-                    'accept': 'application/json'
-                }
-            });
-            
+            const response = await axios.get(
+                `${this.baseUrl}/movie/${movieId}?api_key=${this.apiKey}`
+            );
             return response.data;
         } catch (error) {
             console.error('Error fetching movie details:', error);
             throw error;
         }
     }
-};
+}
 
-module.exports = tmdbService;
+module.exports = new TMDBService();

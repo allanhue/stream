@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { query } = require('../db');
+const tmdbService = require('../services/tmdbService');
 
 const ADMIN_EMAIL = 'allanmwangi329@gmail.com';
 
@@ -17,7 +18,7 @@ const generateToken = (user) => {
 
 const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, tmdbUsername, tmdbPassword } = req.body;
 
         // Check if user exists
         const user = await query(
@@ -40,8 +41,25 @@ const login = async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
+        // If TMDB credentials are provided, validate them
+        if (tmdbUsername && tmdbPassword) {
+            const tmdbAuth = await tmdbService.validateWithLogin(tmdbUsername, tmdbPassword);
+            if (!tmdbAuth.success) {
+                return res.status(401).json({ error: 'TMDB authentication failed' });
+            }
+            
+            // Store TMDB session ID in user record
+            await query(
+                'UPDATE users SET tmdb_session_id = $1 WHERE email = $2',
+                [tmdbAuth.sessionId, email]
+            );
+        }
+
         const token = generateToken(user.rows[0]);
-        res.json({ token });
+        res.json({ 
+            token,
+            tmdbAuthenticated: !!tmdbUsername
+        });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Login failed' });
@@ -50,7 +68,7 @@ const login = async (req, res) => {
 
 const register = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, tmdbUsername, tmdbPassword } = req.body;
 
         // Check if user already exists
         const existingUser = await query(
@@ -62,14 +80,27 @@ const register = async (req, res) => {
             return res.status(400).json({ error: 'User already exists' });
         }
 
+        let tmdbSessionId = null;
+        // If TMDB credentials are provided, validate them
+        if (tmdbUsername && tmdbPassword) {
+            const tmdbAuth = await tmdbService.validateWithLogin(tmdbUsername, tmdbPassword);
+            if (!tmdbAuth.success) {
+                return res.status(401).json({ error: 'TMDB authentication failed' });
+            }
+            tmdbSessionId = tmdbAuth.sessionId;
+        }
+
         // Create new user
         const newUser = await query(
-            'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *',
-            [email, password]
+            'INSERT INTO users (email, password, tmdb_session_id) VALUES ($1, $2, $3) RETURNING *',
+            [email, password, tmdbSessionId]
         );
 
         const token = generateToken(newUser.rows[0]);
-        res.status(201).json({ token });
+        res.status(201).json({ 
+            token,
+            tmdbAuthenticated: !!tmdbSessionId
+        });
     } catch (error) {
         console.error('Registration error:', error);
         res.status(500).json({ error: 'Registration failed' });

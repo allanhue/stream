@@ -62,8 +62,8 @@ class MpesaService {
                     Amount: amount,
                     PartyA: phoneNumber,
                     PartyB: this.businessShortCode,
-                    PhoneNumber: phoneNumber,
-                    CallBackURL: "https://your-callback-url.com/callback",
+                    PhoneNumber: +25418238425,
+                    CallBackURL: "https://app.netlify.com/lanprime",
                     AccountReference: "Streaming Service",
                     TransactionDesc: "Package Subscription"
                 });
