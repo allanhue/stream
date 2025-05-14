@@ -1,6 +1,66 @@
-const TMDB_AUTH_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkODgxY2RmMWY2YzExMjhiNWMyNWE4MjFiMTEwMjBmNyIsIm5iZiI6MTc0NDg5NTA3Mi44MzIsInN1YiI6IjY4MDBmYzYwNjFiMWM0YmIzMjk5ZjNlNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.eoWQ090wBdP37Eq7pwobfGHxWXfslhix2JtSLDHB8Bc';
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL;
+const SUPERADMIN_EMAIL = 'allanmwangi329@gmail.com';
 
 export const authService = {
+    login: async (email, password) => {
+        try {
+            // For superadmin, don't send password
+            const payload = email === SUPERADMIN_EMAIL 
+                ? { email } 
+                : { email, password };
+
+            const response = await axios.post(`${API_URL}/auth/login`, payload);
+            
+            if (response.data.success) {
+                localStorage.setItem('token', response.data.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.data.user));
+                return response.data.data;
+            }
+            throw new Error(response.data.error || 'Login failed');
+        } catch (error) {
+            throw new Error(error.response?.data?.error || 'Login failed');
+        }
+    },
+
+    register: async (email, password) => {
+        try {
+            const response = await axios.post(`${API_URL}/auth/register`, {
+                email,
+                password
+            });
+            
+            if (response.data.success) {
+                localStorage.setItem('token', response.data.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.data.user));
+                return response.data.data;
+            }
+            throw new Error(response.data.error || 'Registration failed');
+        } catch (error) {
+            throw new Error(error.response?.data?.error || 'Registration failed');
+        }
+    },
+
+    logout: () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+    },
+
+    getCurrentUser: () => {
+        const user = localStorage.getItem('user');
+        return user ? JSON.parse(user) : null;
+    },
+
+    isAuthenticated: () => {
+        return !!localStorage.getItem('token');
+    },
+
+    isSuperadmin: () => {
+        const user = authService.getCurrentUser();
+        return user?.email === SUPERADMIN_EMAIL;
+    },
+
     createGuestSession: async () => {
         try {
             const response = await fetch('https://api.themoviedb.org/3/authentication/guest_session/new', {

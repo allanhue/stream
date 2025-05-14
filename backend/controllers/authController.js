@@ -1,15 +1,16 @@
 const jwt = require('jsonwebtoken');
-const { query } = require('../db');
+const { pool } = require('../db');
+const bcrypt = require('bcrypt');
 const tmdbService = require('../services/tmdbService');
 
-const ADMIN_EMAIL = 'allanmwangi329@gmail.com';
+const SUPERADMIN_EMAIL = 'allanmwangi329@gmail.com';
 
 const generateToken = (user) => {
     return jwt.sign(
         { 
             id: user.id, 
             email: user.email,
-            isAdmin: user.email === ADMIN_EMAIL
+            isAdmin: user.email === SUPERADMIN_EMAIL
         },
         process.env.JWT_SECRET,
         { expiresIn: '24h' }
@@ -18,97 +19,172 @@ const generateToken = (user) => {
 
 const login = async (req, res) => {
     try {
-        const { email, password, tmdbUsername, tmdbPassword } = req.body;
+        const { email, password } = req.body;
 
-        // Check if user exists
-        const user = await query(
+        // Special case for superadmin
+        if (email === SUPERADMIN_EMAIL) {
+            // Check if superadmin exists
+            const superadminResult = await pool.query(
+                'SELECT * FROM users WHERE email = $1 AND role = $2',
+                [SUPERADMIN_EMAIL, 'superadmin']
+            );
+
+            if (superadminResult.rows.length === 0) {
+                // Create superadmin if doesn't exist
+                await pool.query(
+                    'INSERT INTO users (email, role) VALUES ($1, $2)',
+                    [SUPERADMIN_EMAIL, 'superadmin']
+                );
+            }
+
+            // Generate token for superadmin
+            const token = jwt.sign(
+                { 
+                    email: SUPERADMIN_EMAIL,
+                    role: 'superadmin'
+                },
+                process.env.JWT_SECRET,
+                { expiresIn: '24h' }
+            );
+
+            return res.json({
+                success: true,
+                data: {
+                    token,
+                    user: {
+                        email: SUPERADMIN_EMAIL,
+                        role: 'superadmin'
+                    }
+                }
+            });
+        }
+
+        // Regular user login
+        const result = await pool.query(
             'SELECT * FROM users WHERE email = $1',
             [email]
         );
 
-        if (user.rows.length === 0) {
-            return res.status(401).json({ error: 'Invalid credentials' });
+        if (result.rows.length === 0) {
+            return res.status(401).json({
+                success: false,
+                error: 'Invalid credentials'
+            });
         }
 
-        // For admin email, bypass password check
-        if (email === ADMIN_EMAIL) {
-            const token = generateToken(user.rows[0]);
-            return res.json({ token });
-        }
+        const user = result.rows[0];
 
-        // For other users, check password
-        if (user.rows[0].password !== password) {
-            return res.status(401).json({ error: 'Invalid credentials' });
-        }
-
-        // If TMDB credentials are provided, validate them
-        if (tmdbUsername && tmdbPassword) {
-            const tmdbAuth = await tmdbService.validateWithLogin(tmdbUsername, tmdbPassword);
-            if (!tmdbAuth.success) {
-                return res.status(401).json({ error: 'TMDB authentication failed' });
-            }
-            
-            // Store TMDB session ID in user record
-            await query(
-                'UPDATE users SET tmdb_session_id = $1 WHERE email = $2',
-                [tmdbAuth.sessionId, email]
+        // If user has no password (new user), create one
+        if (!user.password) {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            await pool.query(
+                'UPDATE users SET password = $1 WHERE id = $2',
+                [hashedPassword, user.id]
             );
+        } else {
+            // Verify password for existing users
+            const validPassword = await bcrypt.compare(password, user.password);
+            if (!validPassword) {
+                return res.status(401).json({
+                    success: false,
+                    error: 'Invalid credentials'
+                });
+            }
         }
 
-        const token = generateToken(user.rows[0]);
-        res.json({ 
-            token,
-            tmdbAuthenticated: !!tmdbUsername
+        const token = jwt.sign(
+            { 
+                id: user.id,
+                email: user.email,
+                role: user.role
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            success: true,
+            data: {
+                token,
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    role: user.role
+                }
+            }
         });
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ error: 'Login failed' });
+        res.status(500).json({
+            success: false,
+            error: 'Login failed'
+        });
     }
 };
 
 const register = async (req, res) => {
     try {
-        const { email, password, tmdbUsername, tmdbPassword } = req.body;
+        const { email, password } = req.body;
 
         // Check if user already exists
-        const existingUser = await query(
+        const existingUser = await pool.query(
             'SELECT * FROM users WHERE email = $1',
             [email]
         );
 
         if (existingUser.rows.length > 0) {
-            return res.status(400).json({ error: 'User already exists' });
+            return res.status(400).json({
+                success: false,
+                error: 'Email already registered'
+            });
         }
 
-        let tmdbSessionId = null;
-        // If TMDB credentials are provided, validate them
-        if (tmdbUsername && tmdbPassword) {
-            const tmdbAuth = await tmdbService.validateWithLogin(tmdbUsername, tmdbPassword);
-            if (!tmdbAuth.success) {
-                return res.status(401).json({ error: 'TMDB authentication failed' });
-            }
-            tmdbSessionId = tmdbAuth.sessionId;
-        }
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create new user
-        const newUser = await query(
-            'INSERT INTO users (email, password, tmdb_session_id) VALUES ($1, $2, $3) RETURNING *',
-            [email, password, tmdbSessionId]
+        // Create user
+        const result = await pool.query(
+            'INSERT INTO users (email, password, role) VALUES ($1, $2, $3) RETURNING id, email, role',
+            [email, hashedPassword, 'user']
         );
 
-        const token = generateToken(newUser.rows[0]);
-        res.status(201).json({ 
-            token,
-            tmdbAuthenticated: !!tmdbSessionId
+        const user = result.rows[0];
+
+        // Generate token
+        const token = jwt.sign(
+            { 
+                id: user.id,
+                email: user.email,
+                role: user.role
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            success: true,
+            data: {
+                token,
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    role: user.role
+                }
+            }
         });
     } catch (error) {
         console.error('Registration error:', error);
-        res.status(500).json({ error: 'Registration failed' });
+        res.status(500).json({
+            success: false,
+            error: 'Registration failed'
+        });
     }
 };
 
-const logout = (req, res) => {
-    res.json({ message: 'Logged out successfully' });
+const logout = async (req, res) => {
+    // Since we're using JWT, we don't need to do anything on the server
+    // The client should remove the token
+    res.json({ success: true });
 };
 
 module.exports = {

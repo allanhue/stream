@@ -5,6 +5,7 @@ const axios = require('axios');
 const authController = require('./controllers/authController');
 const videoController = require('./controllers/videoController');
 const categoryController = require('./controllers/categoryController');
+const paymentController = require('./controllers/paymentController');
 const { storeMovie, query } = require('./db');
 const tmdbService = require('./services/tmdbService');
 
@@ -87,5 +88,9 @@ router.get('/categories/:id', authenticateToken, categoryController.getCategoryB
 router.post('/categories', authenticateToken, categoryController.createCategory);
 router.put('/categories/:id', authenticateToken, categoryController.updateCategory);
 router.delete('/categories/:id', authenticateToken, categoryController.deleteCategory);
+
+// Payment routes
+router.post('/payments/stk-push', authenticateToken, paymentController.initiateSTKPush);
+router.post('/payments/callback', paymentController.handleCallback);
 
 module.exports = router;

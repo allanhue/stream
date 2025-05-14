@@ -1,50 +1,59 @@
 const axios = require('axios');
-require('dotenv').config();
+const { route } = require("../routes");
+const { authService } = require('./services/authService');
 
 class MpesaService {
     constructor() {
-        this.baseUrl = process.env.MPESA_BASE_URL || "https://sandbox.safaricom.co.ke";
+        this.baseUrl = process.env.MPESA_BASE_URL;
         this.consumerKey = process.env.MPESA_CONSUMER_KEY;
         this.consumerSecret = process.env.MPESA_CONSUMER_SECRET;
         this.businessShortCode = process.env.MPESA_BUSINESS_SHORT_CODE;
         this.passkey = process.env.MPESA_PASSKEY;
-        this.accessToken = null;
-        this.tokenExpiry = null;
     }
 
     async getAccessToken() {
         try {
-            if (this.accessToken && this.tokenExpiry && Date.now() < this.tokenExpiry) {
-                return this.accessToken;
-            }
-
             const auth = Buffer.from(`${this.consumerKey}:${this.consumerSecret}`).toString('base64');
             const response = await axios.get(
-                `${this.baseUrl}/oauth/v1/generate?grant_type=client_credentials`,
+                'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
                 {
                     headers: {
                         'Authorization': `Basic ${auth}`
                     }
                 }
             );
-
-            this.accessToken = response.data.access_token;
-            this.tokenExpiry = Date.now() + (response.data.expires_in * 1000);
-            return this.accessToken;
+            return response.data.access_token;
         } catch (error) {
-            console.error('Error getting access token:', error);
-            throw new Error('Failed to get access token');
+            throw new Error(`Error getting access token: ${error.message}`);
         }
+    }
+
+    generatePassword() {
+        const timestamp = this.getTimestamp();
+        const password = Buffer.from(
+            `${this.businessShortCode}${this.passkey}${timestamp}`
+        ).toString('base64');
+        return { password, timestamp };
+    }
+
+    getTimestamp() {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hour = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        return `${year}${month}${day}${hour}${minutes}${seconds}`;
     }
 
     async initiateSTKPush(phoneNumber, amount) {
         try {
             const accessToken = await this.getAccessToken();
-            const timestamp = this.getTimestamp();
-            const password = this.generatePassword(timestamp);
+            const { password, timestamp } = this.generatePassword();
 
             const response = await axios.post(
-                `${this.baseUrl}/mpesa/stkpush/v1/processrequest`,
+                this.baseUrl,
                 {
                     BusinessShortCode: this.businessShortCode,
                     Password: password,
@@ -54,9 +63,9 @@ class MpesaService {
                     PartyA: phoneNumber,
                     PartyB: this.businessShortCode,
                     PhoneNumber: phoneNumber,
-                    CallBackURL: `${process.env.BASE_URL}/api/payment/callback`,
-                    AccountReference: "Streaming Service",
-                    TransactionDesc: "Payment for streaming service"
+                    CallBackURL: `${process.env.BASE_URL}/api/payments/callback`,
+                    AccountReference: "LanPrime Subscription",
+                    TransactionDesc: "Subscription Payment"
                 },
                 {
                     headers: {
@@ -68,34 +77,21 @@ class MpesaService {
 
             return response.data;
         } catch (error) {
-            console.error('Error initiating STK push:', error.response?.data || error);
-            throw new Error('Failed to initiate payment');
+            throw new Error(`STK Push failed: ${error.message}`);
         }
-    }
-
-    getTimestamp() {
-        const date = new Date();
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const hour = String(date.getHours()).padStart(2, '0');
-        const minute = String(date.getMinutes()).padStart(2, '0');
-        const second = String(date.getSeconds()).padStart(2, '0');
-        return `${year}${month}${day}${hour}${minute}${second}`;
-    }
-
-    generatePassword(timestamp) {
-        const str = this.businessShortCode + this.passkey + timestamp;
-        return Buffer.from(str).toString('base64');
     }
 }
 
-module.exports = new MpesaService();
-
-const express = require('express');
-const router = express.Router();
-const mpesaService = require('../services/mpesaService');
-
 // ...payment route implementation...
+route.post(res,req){
+async function handlesendrequesttransact = axios('https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'),
+    method: 'POST',
+        Authorization:Bearer{ }
+    }
 
-module.exports = router;
+// Check if current user is superadmin
+if (authService.isSuperadmin()) {
+    // Show superadmin features
+}
+
+module.exports = new MpesaService();
