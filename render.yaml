@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: lan-prime-backend
+    env: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.11.1
+      - key: PORT
+        value: 3001
+
+  - type: web
+    name: lan-prime-frontend
+    env: node
+    buildCommand: cd test && npm install && npm run build
+    startCommand: cd test && npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.11.1
+      - key: PORT
+        value: 3000

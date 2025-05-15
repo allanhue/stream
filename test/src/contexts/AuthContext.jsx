@@ -1,5 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { authService } from '../services/authService';
+import { 
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged,
+    sendEmailVerification,
+    GoogleAuthProvider,
+    signInWithPopup
+} from 'firebase/auth';
+import { auth } from '../firebase';
 import axios from 'axios';
 
 const AuthContext = createContext();
@@ -9,104 +18,69 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [tmdbSession, setTmdbSession] = useState(null);
-    const [subscriptionStatus, setSubscriptionStatus] = useState('free');
+    const [error, setError] = useState('');
 
     useEffect(() => {
-        const initializeAuth = async () => {
-            try {
-                // Create TMDB guest session
-                const session = await authService.createGuestSession();
-                setTmdbSession(session);
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            setUser(user);
+            setLoading(false);
+        });
 
-                // Get auth token
-                const token = await authService.createAuthToken();
-                localStorage.setItem('tmdb_token', token.request_token);
-            } catch (error) {
-                console.error('Error initializing auth:', error);
-            }
-        };
-        initializeAuth();
+        return () => unsubscribe();
     }, []);
 
-    useEffect(() => {
-        // Check for token in localStorage and set user
-        const token = localStorage.getItem('token');
-        if (token) {
-            // Optionally decode token for user info, or fetch user profile from backend
-            setUser({ token });
-        }
-        setLoading(false);
-    }, []);
-
-    // Handle subscription changes
-    const updateSubscription = async (plan) => {
+    const signup = async (email, password) => {
         try {
-            localStorage.setItem('subscription_status', plan);
-            setSubscriptionStatus(plan);
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            await sendEmailVerification(userCredential.user);
+            return userCredential.user;
         } catch (error) {
-            console.error('Error updating subscription:', error);
+            setError(error.message);
             throw error;
         }
     };
 
-    // Start free trial
-    const startFreeTrial = async () => {
-        try {
-            await updateSubscription('trial');
-            return true;
-        } catch (error) {
-            console.error('Error starting free trial:', error);
-            return false;
-        }
-    };
-
-    // Signup using backend
-    const signup = async (email, password) => {
-        try {
-            const res = await axios.post('/api/auth/register', { email, password });
-            localStorage.setItem('token', res.data.token);
-            setUser({ email });
-            return res.data;
-        } catch (error) {
-            throw new Error(error.response?.data?.error || error.message);
-        }
-    };
-
-    // Login using backend
     const login = async (email, password) => {
         try {
-            const res = await axios.post('/api/auth/login', { email, password });
-            localStorage.setItem('token', res.data.token);
-            setUser({ email });
-            return res.data;
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            return userCredential.user;
         } catch (error) {
-            throw new Error(error.response?.data?.error || error.message);
+            setError(error.message);
+            throw error;
         }
     };
 
-    // Logout
-    const logout = () => {
-        localStorage.removeItem('token');
-        setUser(null);
+    const loginWithGoogle = async () => {
+        try {
+            const provider = new GoogleAuthProvider();
+            const userCredential = await signInWithPopup(auth, provider);
+            return userCredential.user;
+        } catch (error) {
+            setError(error.message);
+            throw error;
+        }
     };
 
-    // Placeholder for Google sign-in (not implemented)
-    const signInWithGoogle = async () => {
-        throw new Error('Google sign-in not implemented');
+    const logout = async () => {
+        try {
+            await signOut(auth);
+            setUser(null);
+        } catch (error) {
+            setError(error.message);
+            throw error;
+        }
     };
 
     const value = {
         user,
         loading,
-        tmdbSession,
-        subscriptionStatus,
-        updateSubscription,
-        startFreeTrial,
+        error,
         signup,
         login,
+        loginWithGoogle,
         logout,
-        signInWithGoogle
+        isAuthenticated: !!user,
+        isEmailVerified: user?.emailVerified ?? false
     };
 
     return (

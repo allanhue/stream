@@ -1,9 +1,9 @@
 [build]
-  command = "cd test; npm install; npm run build"
+  command = "cd test && npm install && npm run build"
   publish = "test/dist"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20.11.1"
 
 [[redirects]]
   from = "/*"

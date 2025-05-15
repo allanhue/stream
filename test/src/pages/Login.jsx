@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { LogIn } from 'lucide-react';
 
 const Login = () => {
-  const { signInWithGoogle } = useAuth();
-  const [currentForm, setCurrentForm] = useState('login'); 
+  const { login, signup, loginWithGoogle } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [currentForm, setCurrentForm] = useState('login');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [confirmationCode, setConfirmationCode] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
-  const [countdown, setCountdown] = useState(0);
+  const navigate = useNavigate();
+  const location = useLocation();
   const navigate = useNavigate();
 
   // Password strength calculator

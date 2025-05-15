@@ -1,6 +1,25 @@
 {
+  "name": "streaming-service-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "test",
+    "backend"
+  ],
+  "scripts": {
+    "start": "cd backend && npm start",
+    "build": "cd test && npm run build",
+    "dev:frontend": "cd test && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "install:all": "npm install && cd backend && npm install && cd ../test && npm install"
+  },
+  "license": "MIT",
   "dependencies": {
     "firebase": "^11.6.0",
     "lucide-react": "^0.503.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }
