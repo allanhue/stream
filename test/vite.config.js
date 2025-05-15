@@ -44,5 +44,10 @@ export default defineConfig({
     fs: {
       strict: false
     }
+  },
+  esbuild: {
+    loader: 'jsx',
+    include: /src\/.*\.jsx?$/,
+    exclude: []
   }
 })
