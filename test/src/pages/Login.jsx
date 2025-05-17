@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
 import { authService } from '../services/authService';
+import { useAuth } from '../contexts/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { loginWithGoogle } = useAuth();
   const [currentForm, setCurrentForm] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -160,6 +162,19 @@ const Login = () => {
 
     } catch (err) {
       setError('Failed to resend code. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setError('');
+    setIsLoading(true);
+    try {
+      await loginWithGoogle();
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.message || 'Google sign-in failed. Please try again.');
     } finally {
       setIsLoading(false);
     }

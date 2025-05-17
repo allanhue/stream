@@ -1,145 +1,156 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { 
+  User, 
+  Clock, 
+  Star, 
+  History, 
+  Download, 
+  Heart, 
+  Settings,
+  Edit2,
+  Camera
+} from 'lucide-react';
+
+const StatCard = ({ icon: Icon, title, value, color }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-blue-500/50 transition-colors"
+  >
+    <div className="flex items-center gap-3 mb-4">
+      <div className={`p-2 bg-${color}-500/10 rounded-lg`}>
+        <Icon className={`w-5 h-5 text-${color}-400`} />
+      </div>
+      <h3 className="text-lg font-semibold">{title}</h3>
+    </div>
+    <p className="text-2xl font-bold">{value}</p>
+  </motion.div>
+);
 
 const Profile = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  
-  // Mock user data
-  const user = {
-    email: ' magg@example.com',
-    name: 'allan mexe'
+  const [isEditing, setIsEditing] = useState(false);
+  const [profile, setProfile] = useState({
+    name: 'John Doe',
+    email: 'john@example.com',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John',
+    joinDate: 'January 2024',
+    watchTime: '156 hours',
+    favoriteGenres: ['Action', 'Sci-Fi', 'Drama'],
+    watchlist: 42,
+    completed: 156,
+    downloads: 28,
+    favorites: 89
+  });
+
+  const handleEditProfile = () => {
+    setIsEditing(true);
   };
 
-  // Mock data for the profile
-  const accountDetails = {
-    memberSince: 'April 2023',
-    plan: 'Premium',
-    nextBilling: 'May 15, 2025',
-  };
-
-  const handleLogout = () => {
-    setIsLoading(true);
-    // Simulate logout process
-    setTimeout(() => {
-      setIsLoading(false);
-      // Here you would typically handle the navigation after logout
-    }, 1000);
+  const handleSaveProfile = () => {
+    setIsEditing(false);
+    // Here you would typically save the profile changes to your backend
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-800">
-        <div className="container mx-auto flex items-center justify-between p-4">
-          <Link to="/">
-            <h1 className="text-3xl font-bold transition-all hover:scale-105">
-              LanPrime
-            </h1>
-          </Link>
-
-          <nav className="flex items-center gap-6">
-            <Link to="/" className="text-gray-300 hover:text-white transition-colors">
-              Home
-            </Link>
-            <Link to="/about" className="text-gray-300 hover:text-white transition-colors">
-              About
-            </Link>
+    <div className="min-h-screen bg-gray-950 p-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Profile Header */}
+        <div className="bg-gray-800 rounded-2xl p-8 mb-8 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-green-500/20"></div>
+          <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+            <div className="relative group">
+              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-700">
+                <img
+                  src={profile.avatar}
+                  alt={profile.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <button className="absolute bottom-0 right-0 p-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-colors">
+                <Camera size={20} />
+              </button>
+            </div>
+            <div className="flex-1 text-center md:text-left">
+              <h1 className="text-3xl font-bold mb-2">{profile.name}</h1>
+              <p className="text-gray-400 mb-4">{profile.email}</p>
+              <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                {profile.favoriteGenres.map((genre, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-gray-700 rounded-full text-sm"
+                  >
+                    {genre}
+                  </span>
+                ))}
+              </div>
+            </div>
             <button
-              onClick={handleLogout}
-              disabled={isLoading}
-              className="bg-black hover:bg-gray-900 text-white px-4 py-2 rounded-md border border-gray-700 transition-all"
+              onClick={handleEditProfile}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
             >
-              {isLoading ? 'Logging out...' : 'Log Out'}
+              <Edit2 size={20} />
+              Edit Profile
             </button>
-          </nav>
-        </div>
-      </header>
-
-      {/* Profile Content */}
-      <main className="container mx-auto p-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Profile Header */}
-          <div className="mb-12 border-b border-gray-800 pb-6">
-            <h2 className="text-3xl font-bold mb-2">My Profile</h2>
-            <p className="text-gray-400">
-              Manage your account settings and preferences
-            </p>
-          </div>
-
-          {/* Profile Grid */}
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Left Sidebar - User Info */}
-            <div className="md:col-span-1">
-              <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
-                <div className="flex flex-col items-center mb-4">
-                  <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center text-xl font-bold mb-4">
-                    {user.name.charAt(0)}
-                  </div>
-                  <h3 className="text-lg font-medium">{user.name}</h3>
-                  <p className="text-sm text-gray-400">{user.email}</p>
-                </div>
-                
-                <div className="mt-6 space-y-3 text-sm">
-                  <p className="flex justify-between">
-                    <span className="text-gray-400">Member since</span>
-                    <span>{accountDetails.memberSince}</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-400">Current plan</span>
-                    <span>{accountDetails.plan}</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-400">Next billing</span>
-                    <span>{accountDetails.nextBilling}</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Main Content Area */}
-            <div className="md:col-span-2">
-              <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 mb-6">
-                <h3 className="text-xl font-bold mb-4">Account Settings</h3>
-                
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-2">Email</label>
-                    <input 
-                      type="email" 
-                      value={user.email} 
-                      readOnly
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md p-3"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-2">Password</label>
-                    <button className="text-white bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-md border border-gray-700 transition-all text-sm">
-                      Change Password
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
-                <h3 className="text-xl font-bold mb-4">Subscription</h3>
-                <p className="text-gray-300 mb-4">
-                  You are currently on the <span className="font-medium">{accountDetails.plan}</span> plan.
-                </p>
-                
-                <div className="flex gap-4">
-                  <button className="bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white px-4 py-2 rounded-md border border-gray-600 transition-all text-sm">
-                    Manage Subscription
-                  </button>
-                  <button className="bg-black hover:bg-gray-900 text-white px-4 py-2 rounded-md border border-gray-700 transition-all text-sm">
-                    Billing History
-                  </button>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
-      </main>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard
+            icon={Clock}
+            title="Watch Time"
+            value={profile.watchTime}
+            color="blue"
+          />
+          <StatCard
+            icon={Star}
+            title="Watchlist"
+            value={profile.watchlist}
+            color="yellow"
+          />
+          <StatCard
+            icon={History}
+            title="Completed"
+            value={profile.completed}
+            color="green"
+          />
+          <StatCard
+            icon={Download}
+            title="Downloads"
+            value={profile.downloads}
+            color="purple"
+          />
+        </div>
+
+        {/* Recent Activity */}
+        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+          <h2 className="text-xl font-bold mb-6">Recent Activity</h2>
+          <div className="space-y-4">
+            {[1, 2, 3].map((item) => (
+              <div
+                key={item}
+                className="flex items-center gap-4 p-4 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                <div className="w-12 h-12 rounded-lg overflow-hidden">
+                  <img
+                    src={`https://picsum.photos/200/200?random=${item}`}
+                    alt="Activity"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-medium">Movie Title {item}</h3>
+                  <p className="text-sm text-gray-400">Watched 2 hours ago</p>
+                </div>
+                <button className="p-2 text-gray-400 hover:text-white transition-colors">
+                  <Heart size={20} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

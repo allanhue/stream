@@ -50,22 +50,16 @@ export default defineConfig(({ command, mode }) => {
           main: resolve(__dirname, 'index.html')
         },
         output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-                return 'react-vendor';
-              }
-              if (id.includes('firebase')) {
-                return 'firebase-vendor';
-              }
-              if (id.includes('@heroicons') || id.includes('framer-motion')) {
-                return 'ui-vendor';
-              }
-            }
+          manualChunks: {
+            'firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
+            'react-vendor': ['react', 'react-dom', 'react-router', 'react-router-dom'],
+            'ui-vendor': ['@heroicons/react', 'framer-motion']
           }
-        },
-        external: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage']
+        }
       }
+    },
+    optimizeDeps: {
+      include: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage']
     }
   }
 })
