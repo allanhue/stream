@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: lanprime-backend
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: DATABASE_URL
+        value: postgresql://postgree_lanprime_user:SJLxfHSKZnYFQG3QhztpeMNyRgxs1N9F@dpg-d0hoouc9c44c739o0h40-a.oregon-postgres.render.com/postgree_lanprime
+      - key: TMDB_API_KEY
+        value: d881cdf1f6c1128b5c25a821b11020f7
+      - key: JWT_SECRET
+        value: 79ec6e351f5d9002a2ec8437f4a697bd5bbdd9b8f523196ba06b9247d6a2111a
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: MPESA_BASE_URL
+        value: https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest
+      - key: MPESA_CONSUMER_KEY
+        value: jimHVDrwV3TPyaq4ZFeCflL4evR9aBtKrRQ4ykj8SM8hnNu5
+      - key: MPESA_CONSUMER_SECRET
+        value: 9ylG11MpfXo2GdHo79FVT1wG2NGxGjBk6Eb3hAVA6uKDJS824dnCQnwAikIaHIn3
+      - key: MPESA_BUSINESS_SHORT_CODE
+        value: lanprimeee
+      - key: MPESA_PASSKEY
+        value: your_passkey
+      - key: MPESA_ENV
+        value: sandbox
+      - key: ALLOWED_ORIGINS
+        value: https://lanprimee.netlify.app,https://stream-back-7dx8.onrender.com
+      - key: BASE_URL
+        value: https://stream-back-7dx8.onrender.com
+      - key: FRONTEND_URL
+        value: https://lanprimee.netlify.app
+    healthCheckPath: /api/health
+    autoDeploy: true
+    plan: free
+    disk:
+      name: tmp
+      mountPath: /tmp
+      sizeGB: 1 

@@ -12,11 +12,13 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // CORS configuration
-const allowedOrigins = [
-    'https://lanprimee.netlify.app',
-    'https://stream-back-7dx8.onrender.com',
-    'http://localhost:5173'
-];
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+    ? process.env.ALLOWED_ORIGINS.split(',')
+    : [
+        'https://lanprimee.netlify.app',
+        'https://stream-back-7dx8.onrender.com',
+        'http://localhost:5173'
+    ];
 
 app.use(cors({
     origin: function(origin, callback) {
@@ -33,15 +35,24 @@ app.use(cors({
 
 app.use(express.json());
 
-// Initialize database
-initDatabase()
-    .then(() => {
-        console.log(' I m right back working as always ');
-    })
-    .catch(error => {
-        console.error('❌ Database haiwezi man x :', error);
-        process.exit(1);
-    });
+// Initialize database with retry logic
+const initializeApp = async (retries = 5, delay = 5000) => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            await initDatabase();
+            console.log('✅ Database initialized successfully');
+            break;
+        } catch (error) {
+            console.error(`❌ Database initialization attempt ${i + 1} failed:`, error);
+            if (i === retries - 1) {
+                console.error('❌ Max retries reached. Exiting...');
+                process.exit(1);
+            }
+            console.log(`⏳ Retrying in ${delay/1000} seconds...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+};
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -50,18 +61,26 @@ app.use('/api/subscriptions', subscriptionRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    res.json({ 
+        status: 'ok', 
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV,
+        database: process.env.DATABASE_URL ? 'connected' : 'not configured'
+    });
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error('haiwezi man x :', err);
+    console.error('Error:', err);
     res.status(err.status || 500).json({
         error: err.message || 'Internal server error'
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`🚀 wahala am here babby agin  ${PORT}`);
+// Start server only after database initialization
+initializeApp().then(() => {
+    app.listen(PORT, () => {
+        console.log(`🚀 Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+    });
 });
 
