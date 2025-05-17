@@ -11,7 +11,11 @@ export const authService = {
                 ? { email } 
                 : { email, password };
 
-            const response = await axios.post(`${API_URL}/auth/login`, payload);
+            const response = await axios.post(`${API_URL}/auth/login`, payload, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
             
             if (response.data.success) {
                 localStorage.setItem('token', response.data.data.token);
@@ -20,6 +24,7 @@ export const authService = {
             }
             throw new Error(response.data.error || 'Login failed');
         } catch (error) {
+            console.error('Login error:', error);
             throw new Error(error.response?.data?.error || 'Login failed');
         }
     },
@@ -29,6 +34,10 @@ export const authService = {
             const response = await axios.post(`${API_URL}/auth/register`, {
                 email,
                 password
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
             
             if (response.data.success) {
@@ -38,6 +47,7 @@ export const authService = {
             }
             throw new Error(response.data.error || 'Registration failed');
         } catch (error) {
+            console.error('Registration error:', error);
             throw new Error(error.response?.data?.error || 'Registration failed');
         }
     },

@@ -1,40 +1,32 @@
-const fs = require('fs');
-const path = require('path');
-const { Pool } = require('pg');
-require('dotenv').config();
+import { readFile } from 'fs/promises';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import { pool } from './index.js';
 
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
-});
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-async function initDatabase() {
+const initDatabase = async () => {
     try {
         // Read the schema file
-        const schemaSQL = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
-        
-        // Create the database if it doesn't exist
-        await pool.query(`
-            DO $$ 
-            BEGIN
-                IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'lan_prime') THEN
-                    CREATE DATABASE lan_prime;
-                END IF;
-            END $$;
-        `);
+        const schemaPath = join(__dirname, 'schema.sql');
+        const schema = await readFile(schemaPath, 'utf8');
 
         // Execute the schema
-        await pool.query(schemaSQL);
-        
-        console.log('✅ Database initialized successfully');
+        await pool.query(schema);
+        console.log('✅ Database schema initialized successfully');
     } catch (error) {
-        console.error('Error initializing database:', error);
+        console.error('❌ Database initialization error:', error);
         throw error;
     }
-}
+};
 
 // Run the initialization
 initDatabase()
-    .then(() => process.exit(0))
+    .then(() => {
+        console.log('✅ Database initialization completed');
+        process.exit(0);
+    })
     .catch((error) => {
         console.error('❌ Database initialization failed:', error);
         process.exit(1);

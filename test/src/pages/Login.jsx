@@ -1,21 +1,20 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
+import { authService } from '../services/authService';
 
 const Login = () => {
-  const { login, signup, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const [currentForm, setCurrentForm] = useState('login');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [confirmationCode, setConfirmationCode] = useState('');
+  const [countdown, setCountdown] = useState(0);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const navigate = useNavigate();
 
   // Password strength calculator
   useEffect(() => {
@@ -98,12 +97,10 @@ const Login = () => {
     
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('Login attempt with:', { email, password });
-      navigate('/dashboard'); // Redirect on success
+      await authService.login(email, password);
+      navigate('/dashboard');
     } catch (err) {
-      setError('Invalid email or password');
+      setError(err.message || 'Invalid email or password');
     } finally {
       setIsLoading(false);
     }
@@ -116,13 +113,11 @@ const Login = () => {
     
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('Signup attempt with:', { email, password });
-      setCountdown(30); // Start countdown for resend
+      await authService.register(email, password);
+      setCountdown(30);
       setCurrentForm('confirmation');
     } catch (err) {
-      setError('Signup failed. Please try again.');
+      setError(err.message || 'Signup failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -167,15 +162,6 @@ const Login = () => {
       setError('Failed to resend code. Please try again.');
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    try {
-      await signInWithGoogle();
-      navigate('/');
-    } catch (error) {
-      console.error('Error signing in:', error);
     }
   };
 

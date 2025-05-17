@@ -1,62 +1,67 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import routes from './src/routes/index.js';
 import { initDatabase } from './db/index.js';
-import {
-    authenticateToken,
-    limiter,
-    errorHandler,
-    cors: customCors,
-    requestLogger,
-    validateContentType,
-} from './middlewares.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import authRoutes from './routes/auth.js';
+import paymentRoutes from './routes/payment.js';
+import subscriptionRoutes from './routes/subscription.js';
 
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 3001;
 
-// Middleware
+// CORS configuration
+const allowedOrigins = [
+    'https://lanprimee.netlify.app',
+    'https://stream-back-7dx8.onrender.com',
+    'http://localhost:5173'
+];
+
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? ['https://lanprimee.netlify.app'] 
-        : ['http://localhost:5173'],
+    origin: function(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
-app.use(customCors);
-app.use(limiter);
-app.use(requestLogger);
-app.use(validateContentType);
+
 app.use(express.json());
 
-// Initialize database and start server
-const startServer = async () => {
-    try {
-        await initDatabase();
-        console.log('✅ Database connected successfully');
-        
-        // Mount routes
-        app.use('/api', routes);
-        
-        // Error handler should be last
-        app.use(errorHandler);
-        
-        const PORT = process.env.PORT || 3001;
-        app.listen(PORT, () => {
-            console.log(`🚀 Server running on port ${PORT}`);
-        });
-    } catch (error) {
-        console.error('❌ Failed to start server:', error);
+// Initialize database
+initDatabase()
+    .then(() => {
+        console.log(' I m right back working as always ');
+    })
+    .catch(error => {
+        console.error('❌ Database haiwezi man x :', error);
         process.exit(1);
-    }
-};
+    });
 
-startServer();
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('haiwezi man x :', err);
+    res.status(err.status || 500).json({
+        error: err.message || 'Internal server error'
+    });
+});
+
+app.listen(PORT, () => {
+    console.log(`🚀 wahala am here babby agin  ${PORT}`);
+});
 

@@ -1,5 +1,8 @@
-const { Pool } = require('pg');
-require('dotenv').config();
+import pkg from 'pg';
+const { Pool } = pkg;
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const pool = new Pool({
     user: process.env.DB_USER,
@@ -48,16 +51,17 @@ const initDatabase = async () => {
             );
         `);
 
+        console.log('✅ Database tables initialized successfully');
         return pool.query('SELECT NOW()');
     } catch (error) {
-        console.error('Database initialization error:', error);
+        console.error('❌ Database initialization error:', error);
         throw error;
     }
 };
 
 const query = (text, params) => pool.query(text, params);
 
-module.exports = {
+export {
     initDatabase,
     query,
     pool
