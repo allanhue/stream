@@ -40,7 +40,7 @@ const initializeApp = async (retries = 5, delay = 5000) => {
     for (let i = 0; i < retries; i++) {
         try {
             await initDatabase();
-            console.log('✅ Database initialized successfully');
+            console.log('✅ Database wahala just allan');
             break;
         } catch (error) {
             console.error(`❌ Database initialization attempt ${i + 1} failed:`, error);
@@ -80,7 +80,7 @@ app.use((err, req, res, next) => {
 // Start server only after database initialization
 initializeApp().then(() => {
     app.listen(PORT, () => {
-        console.log(`🚀 Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+        console.log(`🚀 mambo ni vulai yawaa ${PORT} in ${process.env.NODE_ENV} mode`);
     });
 });
 
