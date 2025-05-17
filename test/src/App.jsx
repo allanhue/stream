@@ -8,15 +8,15 @@ import { Spinner } from '@components/Spinner';
 
 
 // Lazy-loaded components
-const Home = lazy(() => import('@/pages/Home'));
-const Login = lazy(() => import('@/pages/Login'));
-const Movies = lazy(() => import('@/pages/Movies'));
-const Series = lazy(() => import('@/pages/Series'));
-const Categories = lazy(() => import('@/pages/categories'));
-const Contact = lazy(() => import('@/pages/Contact'));
-const Payment = lazy(() => import('@/pages/Payment'));
-const Profile = lazy(() => import('@/pages/Profile'));
-const Services = lazy(() => import('@/pages/Services'));
+const Home = lazy(() => import('./pages/Home'));
+const Login = lazy(() => import('./pages/Login'));
+const Movies = lazy(() => import('./pages/Movies'));
+const Series = lazy(() => import('./pages/Series'));
+const Categories = lazy(() => import('./pages/categories'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Payment = lazy(() => import('./pages/Payment'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Services = lazy(() => import('./pages/Services'));
 
 function App() {
   return (

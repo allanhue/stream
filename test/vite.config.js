@@ -14,11 +14,11 @@ export default defineConfig(({ command, mode }) => {
     resolve: {
       extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
       alias: {
-        '@': resolve(__dirname, './src'),
-        '@components': resolve(__dirname, './src/components'),
-        '@pages': resolve(__dirname, './src/pages'),
-        '@services': resolve(__dirname, './src/services'),
-        '@utils': resolve(__dirname, './src/utils')
+        '@': resolve(__dirname, 'src'),
+        '@components': resolve(__dirname, 'src/components'),
+        '@pages': resolve(__dirname, 'src/pages'),
+        '@services': resolve(__dirname, 'src/services'),
+        '@utils': resolve(__dirname, 'src/utils')
       }
     },
     define: {
@@ -63,7 +63,8 @@ export default defineConfig(({ command, mode }) => {
               }
             }
           }
-        }
+        },
+        external: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage']
       }
     }
   }
