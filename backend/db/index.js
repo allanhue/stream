@@ -4,12 +4,38 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT || 5432,
+// Function to get database configuration
+const getDbConfig = () => {
+    // If DATABASE_URL is provided (production), use it
+    if (process.env.DATABASE_URL) {
+        return {
+            connectionString: process.env.DATABASE_URL,
+            ssl: {
+                rejectUnauthorized: false // Required for some cloud providers
+            }
+        };
+    }
+
+    // Otherwise use individual config (local development)
+    return {
+        user: process.env.DB_USER,
+        host: process.env.DB_HOST,
+        database: process.env.DB_NAME,
+        password: process.env.DB_PASSWORD,
+        port: process.env.DB_PORT || 5432,
+    };
+};
+
+const pool = new Pool(getDbConfig());
+
+// Test the connection
+pool.on('connect', () => {
+    console.log('✅ Database connected successfully');
+});
+
+pool.on('error', (err) => {
+    console.error('❌ Unexpected error on idle client', err);
+    process.exit(-1);
 });
 
 const initDatabase = async () => {
