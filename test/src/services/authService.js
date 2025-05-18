@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { api } from './api';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const SUPERADMIN_EMAIL = 'allanmwangi329@gmail.com';
@@ -11,18 +12,14 @@ export const authService = {
                 ? { email } 
                 : { email, password };
 
-            const response = await axios.post(`${API_URL}/auth/login`, payload, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            const response = await api.login(payload);
             
-            if (response.data.success) {
-                localStorage.setItem('token', response.data.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.data.user));
-                return response.data.data;
+            if (response.success) {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                return response.data;
             }
-            throw new Error(response.data.error || 'Login failed');
+            throw new Error(response.error || 'Login failed');
         } catch (error) {
             console.error('Login error:', error);
             throw new Error(error.response?.data?.error || 'Login failed');
@@ -31,21 +28,14 @@ export const authService = {
 
     register: async (email, password) => {
         try {
-            const response = await axios.post(`${API_URL}/auth/register`, {
-                email,
-                password
-            }, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            const response = await api.register({ email, password });
             
-            if (response.data.success) {
-                localStorage.setItem('token', response.data.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.data.user));
-                return response.data.data;
+            if (response.success) {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                return response.data;
             }
-            throw new Error(response.data.error || 'Registration failed');
+            throw new Error(response.error || 'Registration failed');
         } catch (error) {
             console.error('Registration error:', error);
             throw new Error(error.response?.data?.error || 'Registration failed');

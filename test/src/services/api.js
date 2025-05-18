@@ -8,6 +8,7 @@ export const api = {
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify(credentials),
         });
         return response.json();
@@ -19,6 +20,7 @@ export const api = {
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify(userData),
         });
         return response.json();
@@ -30,6 +32,7 @@ export const api = {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
+            credentials: 'include',
         });
         return response.json();
     },
@@ -39,6 +42,7 @@ export const api = {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
+            credentials: 'include',
         });
         return response.json();
     },
@@ -49,6 +53,7 @@ export const api = {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
+            credentials: 'include',
         });
         return response.json();
     },
@@ -59,6 +64,7 @@ export const api = {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
+            credentials: 'include',
         });
         return response.json();
     },

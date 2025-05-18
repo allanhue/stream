@@ -284,3 +284,8 @@ services:
    - Content recommendations
    - Advanced analytics
    - Mobile app development 
+
+
+
+   /// CHECK ON THE MOVIES FILE NAMING CASE SENSITIVY IS AFFECTING EVERY COMMIT 
+   

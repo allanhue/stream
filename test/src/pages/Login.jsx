@@ -220,17 +220,16 @@ const Login = () => {
 
   const renderLoginForm = () => (
     <>
-      
       {error && (
-        <div className="bg-red-900/30 border border-red-500 rounded-md p-3 mb-6 animate-fade-in">
+        <div className="bg-red-900/30 border border-red-500 rounded-md p-3 mb-4 sm:mb-6 animate-fade-in">
           <p className="text-red-400 text-sm">{error}</p>
         </div>
       )}
 
-      <form onSubmit={handleLoginSubmit} className="space-y-6">
-        <div className="space-y-4">
+      <form onSubmit={handleLoginSubmit} className="space-y-4 sm:space-y-6">
+        <div className="space-y-3 sm:space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-300">
+            <label htmlFor="email" className="block text-sm font-medium mb-1.5 sm:mb-2 text-gray-300">
               Email address
             </label>
             <input
@@ -241,20 +240,20 @@ const Login = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+              className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3.5 sm:py-3 text-base sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
               placeholder="Enter your email"
             />
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
               <label htmlFor="password" className="block text-sm font-medium text-gray-300">
                 Password
               </label>
               <button 
                 type="button"
                 onClick={() => alert('Password reset functionality')} 
-                className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                className="text-sm text-blue-400 hover:text-blue-300 transition-colors active:scale-95"
               >
                 Forgot password?
               </button>
@@ -268,13 +267,13 @@ const Login = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition pr-10"
+                className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3.5 sm:py-3 text-base sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition pr-12"
                 placeholder="Enter your password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-2 -m-2 active:scale-95"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? (
@@ -297,9 +296,9 @@ const Login = () => {
             type="submit"
             disabled={isLoading}
             className={`w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 
-              text-white font-medium py-3 px-4 rounded-md shadow-lg 
+              text-white font-medium py-3.5 sm:py-3 px-4 rounded-md shadow-lg 
               border border-blue-500 transition-all duration-200 flex items-center justify-center
-              ${isLoading ? 'opacity-80 cursor-not-allowed' : 'hover:shadow-blue-500/20'}`}
+              ${isLoading ? 'opacity-80 cursor-not-allowed' : 'hover:shadow-blue-500/20 active:scale-[0.98]'}`}
           >
             {isLoading ? (
               <>
@@ -314,13 +313,13 @@ const Login = () => {
         </div>
       </form>
 
-      <div className="mt-8">
+      <div className="mt-6 sm:mt-8">
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-700"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-black text-gray-400">Or continue with</span>
+            <span className="px-2 bg-gray-800 text-gray-400">Or continue with</span>
           </div>
         </div>
 
@@ -328,29 +327,31 @@ const Login = () => {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="w-full inline-flex justify-center py-2 px-4 border border-gray-700 rounded-md shadow-sm bg-gray-900 text-sm font-medium text-gray-300 hover:bg-gray-800 transition-colors"
+            className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-700 rounded-md shadow-sm bg-gray-900 text-sm font-medium text-gray-300 hover:bg-gray-800 transition-colors active:scale-95"
           >
-            <LogIn size={20} />
+            <LogIn size={20} className="mr-2" />
+            <span>Google</span>
           </button>
           <button
             type="button"
-            className="w-full inline-flex justify-center py-2 px-4 border border-gray-700 rounded-md shadow-sm bg-gray-900 text-sm font-medium text-gray-300 hover:bg-gray-800 transition-colors"
+            className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-700 rounded-md shadow-sm bg-gray-900 text-sm font-medium text-gray-300 hover:bg-gray-800 transition-colors active:scale-95"
           >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
               <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84" />
             </svg>
+            <span>Twitter</span>
           </button>
         </div>
       </div>
 
-      <p className="mt-8 text-center text-gray-400">
+      <p className="mt-6 sm:mt-8 text-center text-gray-400">
         Don't have an account?{' '}
         <button 
           onClick={() => {
             setCurrentForm('signup');
             setError('');
           }} 
-          className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+          className="text-blue-400 hover:text-blue-300 font-medium transition-colors active:scale-95"
         >
           Sign up
         </button>
@@ -360,17 +361,16 @@ const Login = () => {
 
   const renderSignupForm = () => (
     <>
-      
       {error && (
-        <div className="bg-red-900/30 border border-red-500 rounded-md p-3 mb-6 animate-fade-in">
+        <div className="bg-red-900/30 border border-red-500 rounded-md p-3 mb-4 sm:mb-6 animate-fade-in">
           <p className="text-red-400 text-sm">{error}</p>
         </div>
       )}
 
-      <form onSubmit={handleSignupSubmit} className="space-y-6">
-        <div className="space-y-4">
+      <form onSubmit={handleSignupSubmit} className="space-y-4 sm:space-y-6">
+        <div className="space-y-3 sm:space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-300">
+            <label htmlFor="email" className="block text-sm font-medium mb-1.5 sm:mb-2 text-gray-300">
               Email address
             </label>
             <input
@@ -381,13 +381,13 @@ const Login = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
+              className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3.5 sm:py-3 text-base sm:text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
               placeholder="Enter your email"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-2 text-gray-300">
+            <label htmlFor="password" className="block text-sm font-medium mb-1.5 sm:mb-2 text-gray-300">
               Password
             </label>
             <div className="relative">
@@ -399,13 +399,13 @@ const Login = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition pr-10"
+                className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3.5 sm:py-3 text-base sm:text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition pr-12"
                 placeholder="Enter your password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-2 -m-2 active:scale-95"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? (
@@ -424,7 +424,7 @@ const Login = () => {
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2 text-gray-300">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1.5 sm:mb-2 text-gray-300">
               Confirm Password
             </label>
             <input
@@ -435,7 +435,7 @@ const Login = () => {
               required
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
+              className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3.5 sm:py-3 text-base sm:text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
               placeholder="Confirm your password"
             />
           </div>
@@ -446,9 +446,9 @@ const Login = () => {
             type="submit"
             disabled={isLoading}
             className={`w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 
-              text-white font-medium py-3 px-4 rounded-md shadow-lg 
+              text-white font-medium py-3.5 sm:py-3 px-4 rounded-md shadow-lg 
               border border-green-500 transition-all duration-200 flex items-center justify-center
-              ${isLoading ? 'opacity-80 cursor-not-allowed' : 'hover:shadow-green-500/20'}`}
+              ${isLoading ? 'opacity-80 cursor-not-allowed' : 'hover:shadow-green-500/20 active:scale-[0.98]'}`}
           >
             {isLoading ? (
               <>
@@ -463,14 +463,14 @@ const Login = () => {
         </div>
       </form>
 
-      <div className="mt-8 text-center text-gray-400">
+      <div className="mt-6 sm:mt-8 text-center text-gray-400">
         Already have an account?{' '}
         <button 
           onClick={() => {
             setCurrentForm('login');
             setError('');
           }} 
-          className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+          className="text-blue-400 hover:text-blue-300 font-medium transition-colors active:scale-95"
         >
           Sign in
         </button>
@@ -480,21 +480,21 @@ const Login = () => {
 
   const renderConfirmationForm = () => (
     <>
-      <h2 className="text-2xl font-bold mb-6 text-center">Verify Email</h2>
+      <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center">Verify Email</h2>
       
       {error && (
-        <div className="bg-red-900/30 border border-red-500 rounded-md p-3 mb-6 animate-fade-in">
+        <div className="bg-red-900/30 border border-red-500 rounded-md p-3 mb-4 sm:mb-6 animate-fade-in">
           <p className="text-red-400 text-sm">{error}</p>
         </div>
       )}
 
-      <p className="text-gray-400 mb-6 text-center">
+      <p className="text-gray-400 mb-4 sm:mb-6 text-center text-sm sm:text-base">
         We've sent a verification code to <span className="text-white font-medium">{email}</span>
       </p>
 
-      <form onSubmit={handleConfirmationSubmit} className="space-y-6">
+      <form onSubmit={handleConfirmationSubmit} className="space-y-4 sm:space-y-6">
         <div>
-          <label htmlFor="confirmationCode" className="block text-sm font-medium mb-2 text-gray-300">
+          <label htmlFor="confirmationCode" className="block text-sm font-medium mb-1.5 sm:mb-2 text-gray-300">
             Verification Code
           </label>
           <div className="flex">
@@ -511,7 +511,7 @@ const Login = () => {
                   setConfirmationCode(e.target.value);
                 }
               }}
-              className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-center tracking-widest font-mono text-lg"
+              className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3.5 sm:py-3 text-base sm:text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-center tracking-widest font-mono text-lg"
               placeholder="------"
               maxLength={6}
               autoFocus
@@ -525,9 +525,9 @@ const Login = () => {
             type="submit"
             disabled={isLoading}
             className={`w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 
-              text-white font-medium py-3 px-4 rounded-md shadow-lg 
+              text-white font-medium py-3.5 sm:py-3 px-4 rounded-md shadow-lg 
               border border-green-500 transition-all duration-200 flex items-center justify-center
-              ${isLoading ? 'opacity-80 cursor-not-allowed' : 'hover:shadow-green-500/20'}`}
+              ${isLoading ? 'opacity-80 cursor-not-allowed' : 'hover:shadow-green-500/20 active:scale-[0.98]'}`}
           >
             {isLoading ? (
               <>
@@ -542,23 +542,23 @@ const Login = () => {
         </div>
       </form>
 
-      <div className="mt-6 text-center">
+      <div className="mt-4 sm:mt-6 text-center">
         <button
           onClick={handleResendCode}
           disabled={countdown > 0 || isLoading}
-          className={`text-sm ${countdown > 0 || isLoading ? 'text-gray-500' : 'text-blue-400 hover:text-blue-300'} transition-colors`}
+          className={`text-sm ${countdown > 0 || isLoading ? 'text-gray-500' : 'text-blue-400 hover:text-blue-300'} transition-colors active:scale-95`}
         >
           {countdown > 0 ? `Resend code in ${countdown}s` : "Didn't receive a code? Resend"}
         </button>
       </div>
 
-      <div className="mt-8 text-center text-gray-400">
+      <div className="mt-6 sm:mt-8 text-center text-gray-400">
         <button 
           onClick={() => {
             setCurrentForm('signup');
             setError('');
           }} 
-          className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+          className="text-blue-400 hover:text-blue-300 font-medium transition-colors active:scale-95"
         >
           Back to sign up
         </button>
@@ -567,11 +567,11 @@ const Login = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
-      <div className="max-w-md w-full space-y-8 bg-gray-800 bg-opacity-50 backdrop-blur-sm p-8 rounded-lg shadow-lg">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4 sm:p-6">
+      <div className="w-full max-w-md space-y-6 bg-gray-800 bg-opacity-50 backdrop-blur-sm p-4 sm:p-8 rounded-lg shadow-lg">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-white mb-2">Welcome to StreamVibe</h2>
-          <p className="text-gray-300">Sign in to continue watching</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Welcome to StreamVibe</h2>
+          <p className="text-gray-300 text-sm sm:text-base">Sign in to continue watching</p>
         </div>
         
         {currentForm === 'login' && renderLoginForm()}

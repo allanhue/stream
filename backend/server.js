@@ -15,6 +15,7 @@ const PORT = process.env.PORT || 3001;
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
     ? process.env.ALLOWED_ORIGINS.split(',')
     : [
+        'https://lanprime.netlify.app',
         'https://lanprimee.netlify.app',
         'https://stream-back-7dx8.onrender.com',
         'http://localhost:5173'
