@@ -5,6 +5,7 @@ import { initDatabase } from './db/index.js';
 import authRoutes from './routes/auth.js';
 import paymentRoutes from './routes/payment.js';
 import subscriptionRoutes from './routes/subscription.js';
+import movieRoutes from './routes/movies.js';
 
 dotenv.config();
 
@@ -59,6 +60,7 @@ const initializeApp = async (retries = 5, delay = 5000) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/movies', movieRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
