@@ -14,8 +14,7 @@ const Movies = () => {
         const fetchMovies = async () => {
             try {
                 setLoading(true);
-                const url = `${import.meta.env.VITE_API_URL}/api/movies`;
-                const response = await fetch(url, {
+                const response = await fetch(`${VITE_API_URL}/movies/popular`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }

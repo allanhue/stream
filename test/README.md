@@ -1,138 +1,141 @@
-# StreamVibe - Video Streaming Platform
+# Movie Streaming Platform
 
-A modern video streaming platform built with React, Node.js, and PostgreSQL.
+A modern movie streaming platform built with React, Node.js, and TMDB API.
 
-## 🚀 Features
+## Features
 
-- User authentication and authorization
-- Video streaming and playback
+- Browse trending movies and TV shows
+- View upcoming movies
+- Watch movie trailers
+- Add movies to favorites
+- Track watch history
+- View movie recommendations
 - Responsive design for all devices
-- Secure payment processing
-- Subscription management
-- Social login integration
+- Secure API key handling
 
-## 🛠 Tech Stack
+## Tech Stack
 
-### Frontend
-- React + Vite
-- Tailwind CSS
-- React Router
-- Axios
-- Context API for state management
+- Frontend:
+  - React
+  - Vite
+  - Tailwind CSS
+  - Framer Motion
+  - Axios
+  - React Router
 
-### Backend
-- Node.js
-- Express.js
-- PostgreSQL (hosted on Aiven)
-- JWT Authentication
-- CORS enabled
-- SSL/TLS Security
+- Backend:
+  - Node.js
+  - Express
+  - TMDB API
 
-## 📦 Setup and Installation
+## Setup Instructions
 
 1. Clone the repository:
 ```bash
 git clone <repository-url>
+cd streaming
 ```
 
-2. Install frontend dependencies:
+2. Install dependencies:
 ```bash
-cd test
+# Install backend dependencies
+cd backend
+npm install
+
+# Install frontend dependencies
+cd ../test
 npm install
 ```
 
-3. Install backend dependencies:
-```bash
-cd ../backend
-npm install
+3. Configure environment variables:
+
+Backend (.env):
+```
+PORT=3000
+TMDB_API_KEY=your_tmdb_api_key
+TMDB_BASE_URL=https://api.themoviedb.org/3
 ```
 
-4. Set up environment variables:
-   - Create `.env` files in both frontend and backend directories
-   - Configure the following variables:
-     ```
-     # Frontend (.env)
-     VITE_API_URL=your_backend_url
-     
-     # Backend (.env)
-     DATABASE_URL=your_aiven_postgres_url
-     PG_CA_CERT=./ca.pem
-     JWT_SECRET=your_jwt_secret
-     ALLOWED_ORIGINS=your_frontend_urls
-     ```
+Frontend (.env):
+```
+VITE_API_URL=http://localhost:3000/api
+VITE_TMDB_IMAGE_BASE_URL=https://image.tmdb.org/t/p
+```
 
-5. SSL Certificate Setup:
-   - Download the CA certificate from Aiven Console
-   - Save it as `ca.pem` in your backend directory
-   - Ensure the path in `.env` matches your certificate location
+4. Start the development servers:
 
-6. Start the development servers:
 ```bash
-# Frontend (in test directory)
+# Start backend server
+cd backend
 npm run dev
 
-# Backend (in backend directory)
-npm start
+# Start frontend server
+cd ../test
+npm run dev
 ```
 
-## 🗄️ Database
+## Project Structure
 
-The application uses PostgreSQL hosted on Aiven. Aiven provides:
-- Free tier for development
-- Automatic backups
-- Monitoring and metrics
-- High availability
-- Easy scaling
+```
+streaming/
+├── backend/
+│   ├── routes/
+│   │   └── movies.js
+│   ├── server.js
+│   └── .env
+└── test/
+    ├── src/
+    │   ├── components/
+    │   │   ├── MovieCard.jsx
+    │   │   ├── TrendingSection.jsx
+    │   │   ├── UpcomingMovies.jsx
+    │   │   └── VideoPlayer.jsx
+    │   ├── contexts/
+    │   │   └── MovieContext.jsx
+    │   ├── services/
+    │   │   └── movieService.js
+    │   └── pages/
+    │       ├── Home.jsx
+    │       └── MovieDetails.jsx
+    └── .env
+```
 
-### SSL/TLS Security
-- Uses Aiven's CA certificate for secure connections
-- Implements proper SSL/TLS configuration
-- Secure password hashing
-- JWT-based authentication
+## API Endpoints
 
-To monitor your database:
-1. Log in to Aiven Console
-2. Navigate to your PostgreSQL service
-3. Access metrics, logs, and performance data
-4. Monitor connection pools and query performance
+### Backend Routes
 
-## 🔒 Security
+- `GET /api/movies/trending` - Get trending movies
+- `GET /api/movies/upcoming` - Get upcoming movies
+- `GET /api/movies/:id` - Get movie details
+- `GET /api/movies/:id/videos` - Get movie videos/trailers
+- `GET /api/movies/:id/recommendations` - Get movie recommendations
+- `GET /api/movies/:id/similar` - Get similar movies
+- `GET /api/movies/:id/credits` - Get movie credits
 
-- JWT-based authentication
-- Secure password hashing
-- CORS protection with specific origins
-- Environment variable management
-- Input validation and sanitization
-- SSL/TLS encryption for database connections
-- CA certificate validation
+## Features in Detail
 
-### CORS Configuration
-The backend is configured to accept requests from specific origins:
-- Frontend domain (e.g., https://lanprimee.netlify.app)
-- Development server (http://localhost:5173)
-- Additional origins as specified in ALLOWED_ORIGINS
+### Movie Details Page
+- Hero section with backdrop image
+- Movie information (title, rating, release date, runtime)
+- Overview/synopsis
+- Watch trailer button
+- Add to favorites functionality
+- Recommended movies section
 
-## 🚀 Deployment
+### Recommendations
+- Personalized movie recommendations based on the current movie
+- Similar movies suggestions
+- Responsive grid layout
+- Smooth animations and transitions
 
-### Frontend
-- Deployed on Netlify
-- Automatic deployments from main branch
-- Environment variables configured in Netlify dashboard
-
-### Backend
-- Deployed on Render
-- Automatic deployments from main branch
-- Environment variables configured in Render dashboard
-- SSL/TLS configuration for secure database connections
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
