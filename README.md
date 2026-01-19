@@ -1,6 +1,6 @@
 # LanPrime Streaming Platform
 
-A modern streaming platform built with React, Node.js, and PostgreSQL, featuring a robust authentication system, subscription management, and payment integration.
+A modern streaming platform built with React, Node.js and PostgreSQL, featuring a robust authentication system, subscription management, and payment integration.
 
 ## 🏗️ Architecture Overview
 
@@ -32,23 +32,6 @@ A modern streaming platform built with React, Node.js, and PostgreSQL, featuring
    - 401 responses trigger automatic refresh
    - Failed refresh redirects to login
 
-### API Communication
-```javascript
-// Frontend API setup
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true
-});
-
-// Auth interceptor
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-```
 
 ## 🚀 Deployment Architecture
 
@@ -64,30 +47,7 @@ api.interceptors.request.use((config) => {
 - **Environment**: Production with SSL
 - **Scaling**: Auto-scaling based on traffic
 
-## 🔧 Key Technical Challenges & Solutions
-
-### 1. Database Connection
-**Challenge**: Connecting to Render PostgreSQL with SSL
-**Solution**:
-```javascript
-const getDbConfig = () => {
-    if (process.env.NODE_ENV === 'production') {
-        return {
-            connectionString: process.env.DATABASE_URL,
-            ssl: { rejectUnauthorized: false }
-        };
-    }
-    return {
-        user: process.env.DB_USER,
-        host: process.env.DB_HOST,
-        database: process.env.DB_NAME,
-        password: process.env.DB_PASSWORD,
-        port: process.env.DB_PORT
-    };
-};
-```
-
-### 2. Authentication Security
+Authentication Security
 **Challenge**: Secure token management and refresh
 **Solution**:
 - JWT with short expiration
@@ -95,51 +55,7 @@ const getDbConfig = () => {
 - Secure HTTP-only cookies
 - Token blacklisting for logout
 
-### 3. CORS Configuration
-**Challenge**: Cross-origin requests between Netlify and Render
-**Solution**:
-```javascript
-const allowedOrigins = [
-    'https://lanprimee.netlify.app',
-    'https://stream-back-7dx8.onrender.com',
-    'http://localhost:5173'
-];
 
-app.use(cors({
-    origin: function(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true
-}));
-```
-
-### 4. Payment Integration
-**Challenge**: Secure M-Pesa integration
-**Solution**:
-- Sandbox testing environment
-- Webhook handling for payment status
-- Transaction logging
-- Error recovery mechanisms
-
-## 📦 Environment Configuration
-
-### Frontend (.env)
-```env
-VITE_API_URL=https://stream-back-7dx8.onrender.com
-VITE_TMDB_API_KEY=your_tmdb_key
-```
-
-### Backend (.env)
-```env
-NODE_ENV=production
-DATABASE_URL=postgresql://user:pass@host:port/db
-JWT_SECRET=your_secret
-ALLOWED_ORIGINS=https://lanprimee.netlify.app,https://stream-back-7dx8.onrender.com
-```
 
 ## 🔐 Security Measures
 
@@ -236,14 +152,7 @@ ALLOWED_ORIGINS=https://lanprimee.netlify.app,https://stream-back-7dx8.onrender.
    - Advanced analytics
    - Mobile app
 
-## 🤝 Contributing
 
-1. Fork the repository
-2. Create feature branch
-3. Commit changes
-4. Push to branch
-5. Create Pull Request
 
 ## 📄 License
-
 MIT License - See LICENSE file for details 
